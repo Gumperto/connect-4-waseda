@@ -31,6 +31,6 @@ make clean
 # To-do
 - [x] Project spine (create, print, fill board done)
 - [x] Build and run instructions
-- [] How to use git and GitHub
-- [] Implemented actual logic for playing connect 4
-- [] Presentation
+- [ ] How to use git and GitHub
+- [ ] Implemented actual logic for playing connect 4
+- [ ] Presentation
