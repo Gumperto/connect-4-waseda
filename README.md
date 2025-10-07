@@ -21,9 +21,9 @@ make
 ./build/connect-4-waseda
 ```
 
-5. Fix any features you desire and make a pull request! I'll review it within 1 - 2 days.
+5. Fix any features you desire (source files in /src) and make a pull request/direct push to the repo! In case of PR I'll review it within 1 - 2 days.
 
-6. If you would like to clean up the directory a bit, type (this would clean up any object files used during build process):
+6. If you would like to clean up the directory a bit, type:
 ```
 make clean
 ```
@@ -31,6 +31,7 @@ make clean
 # To-do
 - [x] Project spine (create, print, fill board done)
 - [x] Build and run instructions
-- [ ] How to use git and GitHub
-- [ ] Implemented actual logic for playing connect 4
+- [x] How to use git and GitHub
+- [x] Implemented actual logic for playing connect 4
+- [ ] Misc features (game modes, scoreboard, fancier text effects like highlighting winning segment, potentially implement fancier graphical libraries)
 - [ ] Presentation
