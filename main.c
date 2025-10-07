@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "struct_headers.h"
 #include "greeter.h"
+
 #define MAX_ROWS 6
 #define MAX_COLS 7
 #define PLAYER_1 1
