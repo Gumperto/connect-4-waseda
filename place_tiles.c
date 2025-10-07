@@ -9,6 +9,8 @@ coordinate *placeTiles(boardObject *game_board, int columnN, int player) {
         for(int i = game_board->rows - 1; i >= 0; i--) {
             if(game_board->board[i][columnN] == '0') {
                 game_board->board[i][columnN] = 'X';
+                p_coordinate->y = i;
+                break;
             }
         }
     } else {
@@ -16,6 +18,7 @@ coordinate *placeTiles(boardObject *game_board, int columnN, int player) {
             if(game_board->board[i][columnN] == '0') {
                 game_board->board[i][columnN] = 'O';
                 p_coordinate->y = i;
+                break;
             }
         }
     }
