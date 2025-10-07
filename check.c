@@ -18,7 +18,7 @@ int check_horizontal(boardObject *game_board, int x, int y){
     }
 
     //if the newest placement is right-most column
-    if(x == game_board->cols){
+    if(x == game_board->cols-1){
                 for(int a = 1; a<4; a++){
             if(game_board->board[x][y] == game_board->board[x-a][y]){
                 count++;
