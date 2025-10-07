@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "struct_headers.h"
+#include "greeter.h"
 #define MAX_NAME_SIZE 128
 #define KYEL  "\x1B[33m"
 #define KMAG  "\x1B[35m"
