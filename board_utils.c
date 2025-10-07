@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "struct_headers.h"
+#define KYEL  "\x1B[33m"
+#define KMAG  "\x1B[35m"
+#define RESET "\x1B[0m"
 
 boardObject *create_board(int rows, int cols) {
     // Add logic to create to a pointer to boardObject
@@ -23,11 +26,42 @@ void fill_board(boardObject *game_board) {
 void print_board(boardObject game_board) {
     for (int i = 0; i < game_board.rows; i++)
         for (int j = 0; j < game_board.cols; j++) {
-            if (j == game_board.cols - 1)
-                printf("%c\n", game_board.board[i][j]);
-            else
-                printf("%c ", game_board.board[i][j]);
+            if (j == game_board.cols - 1) {
+                if (game_board.board[i][j] == 'X')
+                    printf(KMAG "%c\n" RESET, game_board.board[i][j]);
+                else if (game_board.board[i][j] == 'O')
+                    printf(KYEL "%c\n" RESET, game_board.board[i][j]);
+                else
+                    printf("%c\n", game_board.board[i][j]);
+            }
+            else {
+                if (game_board.board[i][j] == 'X') {
+                    printf(KMAG "%c " RESET, game_board.board[i][j]);
+                    printf("| ");
+                }
+                else if (game_board.board[i][j] == 'O') {
+                    printf(KYEL "%c " RESET, game_board.board[i][j]);
+                    printf("| ");
+                }
+                else {
+                    printf("%c ", game_board.board[i][j]);
+                    printf("| ");
+                }
+            }
         }
+
+    for (int i = 0; i < game_board.rows; i++)
+        printf("────");
+    printf("─\n");
+
+    for (int i = 1; i <= game_board.rows + 1; i++) {
+        if (i == game_board.rows + 1)
+            printf("%d\n", i);
+        else {
+            printf("%d ",i);
+            printf("| ");
+        }
+    }
 }
 
 void free_board(boardObject *game_board) {
