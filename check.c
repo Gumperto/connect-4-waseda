@@ -2,11 +2,10 @@
 #include <stdio.h>
 #include "struct_headers.h"
 
-void check_placement(int player, int columnInput){
-    if(columnInput <= 7){
 
-    } else {
-        printf("Invalid column\n");
+void check_horizontal(boardObject *game_board, int player, int ){
+    for(int a = 0; a<4; a++){
+        if(tilePlacement)
     }
 
 }
