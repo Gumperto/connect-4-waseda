@@ -18,7 +18,7 @@ make
 
 4. Test running the program
 ```
-./connect-4-waseda
+./build/connect-4-waseda
 ```
 
 5. Fix any features you desire and make a pull request! I'll review it within 1 - 2 days.
