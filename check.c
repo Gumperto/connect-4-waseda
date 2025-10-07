@@ -12,6 +12,7 @@ int check_horizontal(boardObject *game_board, int x, int y){
                 count++;
             } else {
                 //doesn't win this round
+                return 0;
             }
         }
     }
@@ -23,6 +24,7 @@ int check_horizontal(boardObject *game_board, int x, int y){
                 count++;
             } else {
                 //doesn't win this round
+                return 0;
             }
         }
     } 
@@ -41,7 +43,9 @@ int check_horizontal(boardObject *game_board, int x, int y){
     }
     if (count == 4){
         //you win this round
+        return 1;
     }
+    
 
 }
 
@@ -55,6 +59,7 @@ int check_vertical(boardObject *game_board, int x, int y){
                 count++;
             } else {
                 //doesn't win this round
+                return 0;
             }
         }
     }
@@ -66,6 +71,7 @@ int check_vertical(boardObject *game_board, int x, int y){
                 count++;
             } else {
                 //doesn't win this round
+                return 0;
             }
         }
     } 
@@ -84,5 +90,6 @@ int check_vertical(boardObject *game_board, int x, int y){
     }
     if (count == 4){
         //you win this round
+        return 1;
     }
 }
