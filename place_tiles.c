@@ -35,7 +35,7 @@ coordinate* scanTiles(boardObject *game_board, int player) {
     player_index = player_choice - 1;
     recent_coords = placeTiles(game_board, player_index, player);
 
-    while ((player_choice >= game_board->cols || player_choice < 0)
+    while ((player_choice > game_board->cols || player_choice < 0)
             || (recent_coords->y >= game_board->rows || recent_coords->y < 0)) {
       if (player_choice > game_board->cols || player_choice < 0) {
           printf("Invalid range! Range is 1 -> %d\n", game_board->cols);
