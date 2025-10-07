@@ -18,15 +18,18 @@ int main() {
    coordinate* recent_coords = malloc(sizeof(coordinate));
    boardObject* game_board = create_board(MAX_ROWS,MAX_COLS);
    fill_board(game_board);
+   print_board(*game_board);
 
    while (1) {
-      printf("Player %s choice: ", player1);
+      printf("Player %s choice? [column number]: ", player1);
       scanTiles(game_board, PLAYER_1);
+      printf("\n");
       print_board(*game_board);
       // Add check logic
-
-      printf("Player %s choice: ", player2);
+      
+      printf("Player %s choice? [column number]: ", player2);
       scanTiles(game_board, PLAYER_2);
+      printf("\n");
       print_board(*game_board);
       // Add check logic
    }

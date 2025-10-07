@@ -40,15 +40,15 @@ void print_board(boardObject game_board) {
             else {
                 if (game_board.board[i][j] == 'X') {
                     printf(KMAG "%c " RESET, game_board.board[i][j]);
-                    printf("| ");
+                    printf("│ ");
                 }
                 else if (game_board.board[i][j] == 'O') {
                     printf(KYEL "%c " RESET, game_board.board[i][j]);
-                    printf("| ");
+                    printf("│ ");
                 }
                 else {
                     printf("%c ", game_board.board[i][j]);
-                    printf("| ");
+                    printf("│ ");
                 }
             }
         }
@@ -62,7 +62,7 @@ void print_board(boardObject game_board) {
             printf("%d\n", i);
         else {
             printf("%d ",i);
-            printf("| ");
+            printf("│ ");
         }
     }
 }
@@ -75,15 +75,27 @@ void free_board(boardObject *game_board) {
 }
 
 void greeter(char* player1, char* player2) {
-   printf("===Welcome to Connect 4!===\n");
+    printf("===========================\n");
+    printf("===Welcome to Connect 4!===\n");
+    printf("===========================\n");
+    printf("\n");
 
-   printf("What's Player 1's name? >>> ");
-   fgets(player1, MAX_NAME_SIZE, stdin);
-   player1[strcspn(player1, "\n")] = 0;
-   printf("Hello, %s! Your tile is: X\n", player1);
+    printf("===NAME SELECTION===\n");
+    printf("\n");
 
-   printf("What's Player 2's name? >>> ");
-   fgets(player2, MAX_NAME_SIZE, stdin);
-   player2[strcspn(player2, "\n")] = 0;
-   printf("Hello, %s! Your tile is: O\n", player2);
+    printf("What's Player 1's name? >>> ");
+    fgets(player1, MAX_NAME_SIZE, stdin);
+    player1[strcspn(player1, "\n")] = 0;
+    printf("Hello, %s! Your tile is: X\n", player1);
+
+    printf("\n");
+
+    printf("What's Player 2's name? >>> ");
+    fgets(player2, MAX_NAME_SIZE, stdin);
+    player2[strcspn(player2, "\n")] = 0;
+    printf("Hello, %s! Your tile is: O\n", player2);
+
+    printf("\n");
+    printf("===GAME START===\n");
+    printf("\n");
 }
