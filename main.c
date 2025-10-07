@@ -11,11 +11,10 @@ int main() {
    print_board(*game_board);
 
    // Add driver logic based on pseudocode
-   // while (game is not over)
-   //   print_board(*game_board);
-   //   play_game(...);
-   //   check_state_for_win(...);
-   //   ...
-   //
+   while (1) {
+    print_board(*game_board);
+    // ADD STUFF
+   }
+
    free_board(game_board);
 }
