@@ -28,12 +28,12 @@ int main() {
 
    // Add driver logic based on pseudocode
    while (1) {
-      printf("Player %d choice: ", PLAYER_1);
+      printf("Player %s choice: ", player1);
       scanTiles(game_board, PLAYER_1);
       print_board(*game_board);
       // Add check logic
 
-      printf("Player %d choice: ", PLAYER_2);
+      printf("Player %s choice: ", player2);
       scanTiles(game_board, PLAYER_2);
       print_board(*game_board);
       // Add check logic
