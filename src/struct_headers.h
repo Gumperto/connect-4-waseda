@@ -12,6 +12,13 @@ typedef struct turncoordinate{
    int y;
 } coordinate;
 
+typedef struct playerDataTag{
+    char* player_name;
+    int score;
+    int player_id;
+    int has_won;
+} playerData;
+
 extern boardObject *create_board(int rows, int cols);
 extern void free_board(boardObject *game_board);
 extern void print_board(boardObject game_board);

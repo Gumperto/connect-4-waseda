@@ -10,10 +10,12 @@ int check_connect_4(boardObject* game_board, int x, int y, int player) {
     if ( (check_horizontal(game_board, x, y, player) == WIN_NUMBER) ||
          (check_vertical(game_board, x, y, player) == WIN_NUMBER)   ||
          (check_diag_left(game_board, x, y, player) == WIN_NUMBER)  ||
-         (check_diag_right(game_board, x, y, player) == WIN_NUMBER)  )
+         (check_diag_right(game_board, x, y, player) == WIN_NUMBER)  ) {
         return 1;
-    else
+    }
+    else {
         return 0;
+    }
 }
 
 int check_horizontal(boardObject *game_board, int x, int y, int player){

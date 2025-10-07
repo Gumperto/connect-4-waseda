@@ -10,42 +10,53 @@
 #define MAX_NAME_SIZE 128
 
 int main() {
-   char* player1 = malloc(sizeof(char) * MAX_NAME_SIZE);
-   char* player2 = malloc(sizeof(char) * MAX_NAME_SIZE);
+    playerData player1, player2;
 
-   greeter(player1, player2);
+    player1.player_name = (char*)malloc(sizeof(char) * MAX_NAME_SIZE);
+    player2.player_name = (char*)malloc(sizeof(char) * MAX_NAME_SIZE);
 
-   coordinate* recent_coords = malloc(sizeof(coordinate));
-   boardObject* game_board = create_board(MAX_ROWS,MAX_COLS);
-   fill_board(game_board);
+    player1.player_id = PLAYER_1;
+    player2.player_id = PLAYER_2;
 
-   int turn = 1;
+    greeter(player1.player_name, player2.player_name);
 
-   while (1) {
-       printf("=============\n");
-       printf("===Turn %d===\n",turn);
-       printf("=============\n");
-       print_board(*game_board);
+    coordinate* recent_coords = malloc(sizeof(coordinate));
+    boardObject* game_board = create_board(MAX_ROWS,MAX_COLS);
+    fill_board(game_board);
 
-       printf("Player %s choice? [column number]: ", player1);
-       recent_coords = scanTiles(game_board, PLAYER_1);
-       printf("\n");
-       print_board(*game_board);
-       printf("%s state: %d\n", player1, check_connect_4(game_board, recent_coords->x, recent_coords->y, PLAYER_1));
-       // Add check logic
+    int turn = 1;
+
+    while (1) {
+        printf("=============\n");
+        printf("===Turn %d===\n",turn);
+        printf("=============\n");
+        print_board(*game_board);
+
+        printf("Player %s choice? [column number]: ", player1.player_name);
+        recent_coords = scanTiles(game_board, PLAYER_1);
+        printf("\n");
+        print_board(*game_board);
+        player1.has_won = check_connect_4(game_board, recent_coords->x, recent_coords->y, PLAYER_1);
+        if (player1.has_won == 1) {
+            printf("%s won!\n", player1.player_name);
+            break;
+        }
        
-       printf("Player %s choice? [column number]: ", player2);
-       recent_coords = scanTiles(game_board, PLAYER_2);
-       printf("\n");
-       print_board(*game_board);
-       printf("%s state: %d\n", player2, check_connect_4(game_board, recent_coords->x, recent_coords->y, PLAYER_2));
-       // Add check logic
+        printf("Player %s choice? [column number]: ", player2.player_name);
+        recent_coords = scanTiles(game_board, PLAYER_2);
+        printf("\n");
+        print_board(*game_board);
+        player2.has_won = check_connect_4(game_board, recent_coords->x, recent_coords->y, PLAYER_2);
+        if (player2.has_won == 1) {
+            printf("%s won!\n", player2.player_name);
+            break;
+        }
 
-       turn++;
-   }
+        turn++;
+    }
 
-   free_board(game_board);
-   free(recent_coords);
-   free(player1);
-   free(player2);
+    free_board(game_board);
+    free(recent_coords);
+    free(player1.player_name);
+    free(player2.player_name);
 }
