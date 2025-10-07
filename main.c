@@ -4,7 +4,7 @@
 #define MAX_COLS 7
 
 int main() {
-   char player1, player2;
+   char player1[20], player2[20];
 
    boardObject* game_board = create_board(MAX_ROWS,MAX_COLS);
 
