@@ -18,5 +18,6 @@ extern void print_board(boardObject game_board);
 extern void fill_board(boardObject *game_board);
 extern coordinate *placeTiles(boardObject *game_board, int columnN, int player);
 extern coordinate *scanTiles(boardObject *game_board, int player);
+extern int check_connect_4(boardObject* game_board, int x, int y, int player);
 
 #endif

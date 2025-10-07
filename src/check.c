@@ -1,118 +1,135 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include "struct_headers.h"
+#define WIN_NUMBER 4
 
-int check_horizontal(boardObject *game_board, int x, int y){
-    char testCase[4] = {'X', 'X', 'X', 'X'};
+int check_horizontal(boardObject *game_board, int x, int y, int player);
+int check_vertical(boardObject *game_board, int x, int y, int player);
+int check_diag_left(boardObject *game_board, int x, int y, int player);
+int check_diag_right(boardObject *game_board, int x, int y, int player);
+
+int check_connect_4(boardObject* game_board, int x, int y, int player) {
+    if ( (check_horizontal(game_board, x, y, player) == WIN_NUMBER) ||
+         (check_vertical(game_board, x, y, player) == WIN_NUMBER)   ||
+         (check_diag_left(game_board, x, y, player) == WIN_NUMBER)  ||
+         (check_diag_right(game_board, x, y, player) == WIN_NUMBER)  )
+        return 1;
+    else
+        return 0;
+}
+
+int check_horizontal(boardObject *game_board, int x, int y, int player){
+    char increment_char;
+    if (player == 1)
+        increment_char = 'X';
+    else
+        increment_char = 'O';
+
     int count = 0;
-    //checking each "4" block
-    for(int a = 0; a<4; a++){
-        //checking each position
-        for(int b = 0; b<4; b++){
-            if(game_board->board[a+b][y] == testCase[b]){
-                count++;
-                if(count == 4){
-                    //win this round
-                    break;
-                }
-            }
-        
-        }
-        
+    // Run left
+    int runner = x;
+    while (runner >= 0) {
+        if (game_board->board[y][runner] != increment_char) break;
+        count++;
+        runner--;
     }
 
+    // Run right
+    runner = x + 1;
+    while (runner < game_board->cols) {
+        if (game_board->board[y][runner] != increment_char) break;
+        count++;
+        runner++;
+    }
+    return count;
 }
-// int check_horizontal(boardObject *game_board, int x, int y){
-//     int count = 0;
-//     //if the newest placement is left-most column
-//     if(x == 0){
-//         for(int a = 1; a<4; a++){
-//             if(game_board->board[x][y] == game_board->board[x+a][y]){
-//                 count++;
-//             } else {
-//                 //doesn't win this round
-//                 return 0;
-//             }
-//         }
-//     }
 
-//     //if the newest placement is right-most column
-//     if(x == game_board->cols-1){
-//                 for(int a = 1; a<4; a++){
-//             if(game_board->board[x][y] == game_board->board[x-a][y]){
-//                 count++;
-//             } else {
-//                 //doesn't win this round
-//                 return 0;
-//             }
-//         }
-//     } 
+int check_vertical(boardObject *game_board, int x, int y, int player) {
+    char increment_char;
+    if (player == 1)
+        increment_char = 'X';
+    else
+        increment_char = 'O';
+
+    int count = 0;
+    // Run up
+    int runner = y;
+    while (runner >= 0) {
+        if (game_board->board[runner][x] != increment_char) break;
+        count++;
+        runner--;
+    }
+
+    // Run down
+    runner = y + 1;
+    while (runner < game_board->rows) {
+        if (game_board->board[runner][x] != increment_char) break;
+        count++;
+        runner++;
+    }
+    return count;
+}
+
+int check_diag_left(boardObject *game_board, int x, int y, int player) {
+    char increment_char;
+    if (player == 1)
+        increment_char = 'X';
+    else
+        increment_char = 'O';
+
+    int count = 0;
+
+    // Run up-left
+    int runner_x = x;
+    int runner_y = y;
     
-//     //if the placement is anywhere else in the row
-//     else if(game_board->board[x][y] == (game_board->board[x-1][y]||game_board->board[x+1][y])){
-//         if(game_board->board[x-1][y] && game_board->board[x+1][y]){
-//             count += 3;
-//             if(game_board->board[x-2][y] || game_board->board[x+2][y]){
-//                 count += 1;
-//             }
-//         } else {
-//             count += 2;
-//         }
-        
-//     }
-//     if (count == 4){
-//         //you win this round
-//         return 1;
-//     }
+    while (runner_x >= 0 && runner_y >= 0) {
+        if (game_board->board[runner_y][runner_x] != increment_char) break;
+        count++;
+        runner_x--;
+        runner_y--;
+    }
+
+    // Run down-right
+    runner_x = x + 1;
+    runner_y = y + 1;
     
+    while (runner_x < game_board->cols && runner_y < game_board->rows) {
+        if (game_board->board[runner_y][runner_x] != increment_char) break;
+        count++;
+        runner_x++;
+        runner_y++;
+    }
+    return count;
+}
 
-// }
+int check_diag_right(boardObject *game_board, int x, int y, int player) {
+    char increment_char;
+    if (player == 1)
+        increment_char = 'X';
+    else
+        increment_char = 'O';
 
+    int count = 0;
 
-// int check_vertical(boardObject *game_board, int x, int y){
-//     int count = 0;
-//     //if the newest placement is top-most column
-//     if(y == 0){
-//         for(int a = 1; a<4; a++){
-//             if(game_board->board[x][y] == game_board->board[x][y+a]){
-//                 count++;
-//             } else {
-//                 //doesn't win this round
-//                 return 0;
-//             }
-//         }
-//     }
-
-//     //if the newest placement is bottom-most column
-//     if(y == game_board->rows-1){
-//                 for(int a = 1; a<4; a++){
-//             if(game_board->board[x][y] == game_board->board[x][y-a]){
-//                 count++;
-//             } else {
-//                 //doesn't win this round
-//                 return 0;
-//             }
-//         }
-//     } 
+    // Run up-right
+    int runner_x = x;
+    int runner_y = y;
     
-//     //if the placement is anywhere else in the row
-//     else if(game_board->board[x][y] == (game_board->board[x][y-1]||game_board->board[x][y+1])){
-//         if(game_board->board[x][y-1] && game_board->board[x][y+1]){
-//             count += 3;
-//             if(game_board->board[x][y-2] || game_board->board[x][y+2]){
-//                 count += 1;
-//             }
-//         } else {
-//             count += 2;
-//         }
-        
-//     }
-//     if (count == 4){
-//         //you win this round
-//         return 1;
-//     }
-// }
+    while (runner_x < game_board->cols && runner_y >= 0) {
+        if (game_board->board[runner_y][runner_x] != increment_char) break;
+        count++;
+        runner_x++;
+        runner_y--;
+    }
 
-// check_diagonal(boardObject *game_board, int x, int y){
-//     //if the newest placement is bottom
-// }
+    // Run down-left
+    runner_x = x - 1;
+    runner_y = y + 1;
+    
+    while (runner_x >= 0 && runner_y < game_board->rows) {
+        if (game_board->board[runner_y][runner_x] != increment_char) break;
+        count++;
+        runner_x--;
+        runner_y++;
+    }
+    return count;
+}
