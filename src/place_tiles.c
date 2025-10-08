@@ -9,7 +9,7 @@ coordinate *placeTiles(boardObject *game_board, int columnN, playerData* player)
     if(player->player_id == PLAYER_1) {
         p_coordinate->y = -1;
         for(int i = game_board->rows - 1; i >= 0; i--) {
-            if(game_board->board[i][columnN] == '-') {
+            if(game_board->board[i][columnN] == EMPTY) {
                 game_board->board[i][columnN] = PLAYER_1_SYMBOL;
                 p_coordinate->y = i;
                 break;
@@ -19,7 +19,7 @@ coordinate *placeTiles(boardObject *game_board, int columnN, playerData* player)
     else {
         p_coordinate->y = -1;
         for(int i = game_board->rows - 1; i >= 0; i--) {
-            if(game_board->board[i][columnN] == '-') {
+            if(game_board->board[i][columnN] == EMPTY) {
                 game_board->board[i][columnN] = OPPONENT_SYMBOL;
                 p_coordinate->y = i;
                 break;

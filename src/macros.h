@@ -9,5 +9,6 @@
 #define MAX_NAME_SIZE 128
 #define PLAYER_1_SYMBOL 'X'
 #define OPPONENT_SYMBOL 'O'
+#define EMPTY '-'
 
 #endif

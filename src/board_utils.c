@@ -18,11 +18,10 @@ boardObject *create_board(int rows, int cols) {
     return game_board;
 }
 
-// Test function
 void fill_board(boardObject *game_board) {
     for (int i = 0; i < game_board->rows; i++)
         for (int j = 0; j < game_board->cols; j++) 
-            game_board->board[i][j] = '-';
+            game_board->board[i][j] = EMPTY;
 }
 
 void print_board(boardObject game_board) {
