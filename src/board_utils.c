@@ -1,8 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include "struct_headers.h"
-#include "greeter.h"
 #define MAX_NAME_SIZE 128
 #define KYEL  "\x1B[33m"
 #define KMAG  "\x1B[35m"
@@ -72,30 +70,4 @@ void free_board(boardObject *game_board) {
         free(game_board->board[i]);
     free(game_board->board);
     free(game_board);
-}
-
-void greeter(char* player1, char* player2) {
-    printf("===========================\n");
-    printf("===Welcome to Connect 4!===\n");
-    printf("===========================\n");
-    printf("\n");
-
-    printf("===NAME SELECTION===\n");
-    printf("\n");
-
-    printf("What's Player 1's name? >>> ");
-    fgets(player1, MAX_NAME_SIZE, stdin);
-    player1[strcspn(player1, "\n")] = 0;
-    printf("Hello, %s! Your tile is: X\n", player1);
-
-    printf("\n");
-
-    printf("What's Player 2's name? >>> ");
-    fgets(player2, MAX_NAME_SIZE, stdin);
-    player2[strcspn(player2, "\n")] = 0;
-    printf("Hello, %s! Your tile is: O\n", player2);
-
-    printf("\n");
-    printf("===GAME START===\n");
-    printf("\n");
 }

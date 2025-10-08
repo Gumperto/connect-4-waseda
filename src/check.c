@@ -1,4 +1,5 @@
 #include "struct_headers.h"
+#include "macros.h"
 #define WIN_NUMBER 4
 
 int check_horizontal(boardObject *game_board, int x, int y, int player);
@@ -6,11 +7,11 @@ int check_vertical(boardObject *game_board, int x, int y, int player);
 int check_diag_left(boardObject *game_board, int x, int y, int player);
 int check_diag_right(boardObject *game_board, int x, int y, int player);
 
-int check_connect_4(boardObject* game_board, int x, int y, int player) {
-    if ( (check_horizontal(game_board, x, y, player) == WIN_NUMBER) ||
-         (check_vertical(game_board, x, y, player) == WIN_NUMBER)   ||
-         (check_diag_left(game_board, x, y, player) == WIN_NUMBER)  ||
-         (check_diag_right(game_board, x, y, player) == WIN_NUMBER)  ) {
+int check_connect_4(boardObject* game_board, int x, int y, playerData* player) {
+    if ( (check_horizontal(game_board, x, y, player->player_id) >= WIN_NUMBER) ||
+         (check_vertical(game_board, x, y, player->player_id) >= WIN_NUMBER)   ||
+         (check_diag_left(game_board, x, y, player->player_id) >= WIN_NUMBER)  ||
+         (check_diag_right(game_board, x, y, player->player_id) >= WIN_NUMBER)  ) {
         return 1;
     }
     else {
@@ -20,10 +21,10 @@ int check_connect_4(boardObject* game_board, int x, int y, int player) {
 
 int check_horizontal(boardObject *game_board, int x, int y, int player){
     char increment_char;
-    if (player == 1)
-        increment_char = 'X';
+    if (player == PLAYER_1)
+        increment_char = PLAYER_1_SYMBOL;
     else
-        increment_char = 'O';
+        increment_char = OPPONENT_SYMBOL;
 
     int count = 0;
     // Run left
@@ -46,10 +47,10 @@ int check_horizontal(boardObject *game_board, int x, int y, int player){
 
 int check_vertical(boardObject *game_board, int x, int y, int player) {
     char increment_char;
-    if (player == 1)
-        increment_char = 'X';
+    if (player == PLAYER_1)
+        increment_char = PLAYER_1_SYMBOL;
     else
-        increment_char = 'O';
+        increment_char = OPPONENT_SYMBOL;
 
     int count = 0;
     // Run up
@@ -72,10 +73,10 @@ int check_vertical(boardObject *game_board, int x, int y, int player) {
 
 int check_diag_left(boardObject *game_board, int x, int y, int player) {
     char increment_char;
-    if (player == 1)
-        increment_char = 'X';
+    if (player == PLAYER_1)
+        increment_char = PLAYER_1_SYMBOL;
     else
-        increment_char = 'O';
+        increment_char = OPPONENT_SYMBOL;
 
     int count = 0;
 
@@ -105,11 +106,11 @@ int check_diag_left(boardObject *game_board, int x, int y, int player) {
 
 int check_diag_right(boardObject *game_board, int x, int y, int player) {
     char increment_char;
-    if (player == 1)
-        increment_char = 'X';
+    if (player == PLAYER_1)
+        increment_char = PLAYER_1_SYMBOL;
     else
-        increment_char = 'O';
-
+        increment_char = OPPONENT_SYMBOL;
+    
     int count = 0;
 
     // Run up-right
