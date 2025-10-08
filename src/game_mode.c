@@ -58,6 +58,9 @@ void pvp_mode() {
         turn++;
     }
 
+    printf("Final board:\n");
+    print_board(*game_board);
+
     free_board(game_board);
     free(recent_coords);
     free(player1->player_name);

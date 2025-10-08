@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "struct_headers.h"
+#include "macros.h"
 #define MAX_NAME_SIZE 128
 #define KYEL  "\x1B[33m"
 #define KMAG  "\x1B[35m"
@@ -28,19 +29,19 @@ void print_board(boardObject game_board) {
     for (int i = 0; i < game_board.rows; i++)
         for (int j = 0; j < game_board.cols; j++) {
             if (j == game_board.cols - 1) {
-                if (game_board.board[i][j] == 'X')
+                if (game_board.board[i][j] == PLAYER_1_SYMBOL)
                     printf(KMAG "%c\n" RESET, game_board.board[i][j]);
-                else if (game_board.board[i][j] == 'O')
+                else if (game_board.board[i][j] == OPPONENT_SYMBOL)
                     printf(KYEL "%c\n" RESET, game_board.board[i][j]);
                 else
                     printf("%c\n", game_board.board[i][j]);
             }
             else {
-                if (game_board.board[i][j] == 'X') {
+                if (game_board.board[i][j] == PLAYER_1_SYMBOL) {
                     printf(KMAG "%c " RESET, game_board.board[i][j]);
                     printf("│ ");
                 }
-                else if (game_board.board[i][j] == 'O') {
+                else if (game_board.board[i][j] == OPPONENT_SYMBOL) {
                     printf(KYEL "%c " RESET, game_board.board[i][j]);
                     printf("│ ");
                 }
