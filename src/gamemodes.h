@@ -1,7 +1,7 @@
 #ifndef gamemodes
 #define gamemodes
 
-extern void pvp_mode();
-extern void pvbot_mode();
+extern int pvp_mode(void);
+extern int pvbot_mode(void);
 
 #endif

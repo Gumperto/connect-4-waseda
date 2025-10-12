@@ -2,9 +2,22 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <stdbool.h>
 #include "struct_headers.h"
 #include "greeter.h"
 #include "macros.h"
+
+static int playAgain(void){
+    char input = ' ';
+    printf("\nRestart [r], or quit [q]?\n");
+    scanf(" %c", &input);
+    if(input == 'r' || input == 'R') return 1;
+    else if (input == 'Q' || input == 'q') return 0;
+    else {
+        printf("Invalid input!\n");
+        return playAgain();
+    }
+}
 
 void playerPlay(playerData* player, boardObject* game_board, coordinate* recent_coords) {
     if (player->player_id != BOT)
@@ -19,7 +32,7 @@ void playerPlay(playerData* player, boardObject* game_board, coordinate* recent_
     free(temp);
 }
 
-void pvp_mode() {
+int pvp_mode(void) {
     playerData* player1 = malloc(sizeof(playerData)); 
     playerData* player2 = malloc(sizeof(playerData));
 
@@ -45,13 +58,17 @@ void pvp_mode() {
 
         playerPlay(player1, game_board, recent_coords);
         if (player1->has_won == 1) {
+            printf("\n==============\n");
             printf("%s won!\n", player1->player_name);
+            printf("==============\n\n");
             break;
         }
        
         playerPlay(player2, game_board, recent_coords);
         if (player2->has_won == 1) {
+            printf("\n==============\n");
             printf("%s won!\n", player2->player_name);
+            printf("==============\n\n");
             break;
         }
 
@@ -67,9 +84,10 @@ void pvp_mode() {
     free(player1);
     free(player2->player_name);
     free(player2);
+    return playAgain();
 }
 
-void pvbot_mode() {
+int pvbot_mode(void) {
     srand(time(NULL));
     playerData* player = malloc(sizeof(playerData)); 
     playerData* bot = malloc(sizeof(playerData));
@@ -100,13 +118,17 @@ void pvbot_mode() {
 
         playerPlay(player, game_board, recent_coords);
         if (player->has_won == 1) {
+            printf("\n==============\n");
             printf("%s won!\n", player->player_name);
+            printf("==============\n\n");
             break;
         }
        
         playerPlay(bot, game_board, recent_coords);
         if (bot->has_won == 1) {
+            printf("\n==============\n");
             printf("CPU won!\n");
+            printf("==============\n\n");
             break;
         }
 
@@ -121,4 +143,5 @@ void pvbot_mode() {
     free(player->player_name);
     free(player);
     free(bot);
+    return playAgain();
 }

@@ -18,13 +18,13 @@ char greeter() {
     printf("\n");
 
     printf("Enter game mode: [p]layer / [b]ot >>> ");
-    scanf("%c", &game_mode);
+    scanf(" %c", &game_mode);
     getchar();
 
     while ((game_mode != 'p' && game_mode != 'P') && 
            (game_mode != 'b' && game_mode != 'B')) {
         printf("Game mode %c not found! Re-enter: [p]layer / [b]ot >>> ", game_mode);
-        scanf("%c", &game_mode);
+        scanf(" %c", &game_mode);
         getchar();
     }
     printf("\n");
