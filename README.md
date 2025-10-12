@@ -34,7 +34,7 @@ make clean
 - [x] How to use git and GitHub
 - [x] Implemented actual logic for playing connect 4
 - [ ] Error checking: check when the board is completely filled
-- [ ] Reset/quit game feature (should be exposed enough so the previous error checking thing can also just access it to end the game when it detects there's no possible move left)
+- [x] Reset/quit game feature (should be exposed enough so the previous error checking thing can also just access it to end the game when it detects there's no possible move left)
 - [ ] Misc features (game modes, scoreboard, fancier text effects like highlighting winning segment, potentially implement fancier graphical libraries)
 - - [x] Bot mode
 - - [ ] Score board
