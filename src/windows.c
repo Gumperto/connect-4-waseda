@@ -12,9 +12,6 @@ WINDOW *create_newwin(int height, int width, int starty, int startx){
     WINDOW* local_win;
     local_win = newwin(height, width, starty, startx);
     box(local_win, 0, 0);
-
-    wrefresh(local_win);
-
     return local_win;
 }
 
@@ -48,7 +45,22 @@ void print_in_middle(WINDOW* window, int starty, int startx, int box_width, char
    wattron(window, color);
    mvwprintw(window, y, x, "%s", string);
    wattroff(window, color);
-   refresh();
+   wrefresh(window);
+}
+
+
+void win_show(WINDOW *win, char *label, int label_color) {	
+    int startx, starty, height, width;
+
+	getbegyx(win, starty, startx);
+	getmaxyx(win, height, width);
+
+	box(win, 0, 0);
+	mvwaddch(win, 2, 0, ACS_LTEE); // First line
+	mvwhline(win, 2, 1, ACS_HLINE, width - 2); // Second line
+	mvwaddch(win, 2, width - 1, ACS_RTEE); // Last line
+	
+	print_in_middle(win, 1, 0, width, label, label_color);
 }
 
 void print_ascii_art(WINDOW* window, int starty, int startx, int box_width, char *file_name, chtype color) {

@@ -1,9 +1,8 @@
 #include "greeter.h"
-#include "macros.h"
 #include "windows.h"
+#include "macros.h"
 #include <menu.h>
 #include <panel.h>
-#include <string.h>
 #include <ncurses.h>
 #include <stdlib.h>
 
@@ -11,15 +10,14 @@
 #define ARRAY_SIZE 4
 #define TEMP_HACK_FOR_LONGEST_IN_MENU 36
 
-char greeter(WINDOW *window, int window_height, int window_width, int window_startx, int window_starty) {
+int greeter(WINDOW *window, int window_height, int window_width, int window_startx, int window_starty) {
     int switch_char;
-    char game_mode;
+    char game_mode = -1;
     int half_height = window_height / 2;
     curs_set(0);
     init_pair(1, COLOR_CYAN, COLOR_BLACK);
 
-    print_ascii_art(window, 1, 0, window_width, "ascii_art.txt", COLOR_PAIR(1));
-    wrefresh(window);
+    print_ascii_art(window, 1, 0, window_width, "./assets/splash.txt", COLOR_PAIR(1));
 
     const char* menu_text[ARRAY_SIZE + 1][2] = {
         "PvP", "Play against a player",
@@ -52,53 +50,67 @@ char greeter(WINDOW *window, int window_height, int window_width, int window_sta
 			case KEY_UP:
 				menu_driver(menu, REQ_UP_ITEM);
 				break;
-            case 10:
+            case 10: // Which is <ENTER>
             {
                 ITEM* current;
-                void (*ptr)(char *);
 
                 current = current_item(menu);
-                ptr = item_userptr(current);
-                ptr((char*)item_name(current));
-                pos_menu_cursor(menu);
-                break;
+                game_mode = item_index(current);
+                wprintw(window, "%d", game_mode);
+                goto cleanup;
             }
             break;
 		}
         wrefresh(window);
 	}
-
-    unpost_menu(menu);
-    for(int i = 0; i < ARRAY_SIZE; ++i)
+    
+    cleanup:
+        unpost_menu(menu);
+        for(int i = 0; i < ARRAY_SIZE; ++i)
             free_item(menu_items[i]);
-    free_menu(menu);
-    return game_mode;
+        free_menu(menu);
+        wclear(window);
+        wrefresh(window);
+        return game_mode;
 }
 
-void fetch_names(char *player1, char *player2) {
-    printw("===NAME SELECTION===\n");
-    printw("\n");
-    refresh();
+void fetch_names(char *player1, char *player2, WINDOW* window, 
+                 int window_height, int window_width, 
+                 int window_startx, int window_starty) {
+    echo();
+    box(window, 0, 0);
+    init_pair(3, COLOR_CYAN, COLOR_BLACK);
+    print_ascii_art(window, 2, 0, window_width, "./assets/name.txt", COLOR_PAIR(3));
+    wrefresh(window);
+    int display_height = 5;
+    int horizontal_length = window_width * 2 / 3;
+    int horizontal_begin = (window_width - horizontal_length) / 2;
 
-    printw("What's Player 1's name? >>> ");
-    refresh();
-    scanw("%s",player1);
-    refresh();
-    player1[strcspn(player1, "\n")] = 0;
-    while (strcspn(player1, ",") != strlen(player1))
-        player1[strcspn(player1, ",")] = ' ';
-    printw("Hello, %s! Your tile is: %c\n", player1, PLAYER_1_SYMBOL);
-    refresh();
+    if (player1 != NULL) {
+        WINDOW* win_player_1 = derwin(window, display_height, horizontal_length,
+                                     (window_height - display_height) / 2, horizontal_begin);
+        init_pair(1, COLOR_MAGENTA, COLOR_BLACK);
+        win_show(win_player_1, "Player 1 name", COLOR_PAIR(1));
+        mvwprintw(win_player_1, display_height - 2, 2, "Input Player 1's (%c) name >>> ", PLAYER_1_SYMBOL);
+        wrefresh(win_player_1);
+        curs_set(1);
+        wscanw(win_player_1, "%s", player1);
+        curs_set(0);
+        destroy_win(win_player_1);
+    }
 
-    printw("\n");
+    if (player2 != NULL) {
+        WINDOW* win_player_2 = derwin(window, display_height, horizontal_length,
+                                     (window_height - display_height) / 2, horizontal_begin);
+        init_pair(2, COLOR_YELLOW, COLOR_BLACK);
+        win_show(win_player_2, "Player 2 name", COLOR_PAIR(2));
+        mvwprintw(win_player_2, display_height - 2, 2, "Input Player 2's (%c) name >>> ", OPPONENT_SYMBOL);
+        wrefresh(win_player_2);
+        curs_set(1);
+        wscanw(win_player_2, "%s", player2);
+        curs_set(0);
+        destroy_win(win_player_2);
+    }
 
-    printw("What's Player 2's name? >>> ");
-    refresh();
-    scanw("%s",player2);
-    refresh();
-    player2[strcspn(player2, "\n")] = 0;
-    while (strcspn(player2, ",") != strlen(player2))
-        player2[strcspn(player2, ",")] = ' ';
-    printw("Hello, %s! Your tile is: %c\n", player2, OPPONENT_SYMBOL);    
-    refresh();
+    noecho();
 }
