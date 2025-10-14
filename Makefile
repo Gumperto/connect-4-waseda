@@ -9,7 +9,7 @@ OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 
 # Make executable ./build/connect_four_waseda from objects
 $(BUILD_DIR)/$(EXEC): $(OBJS) $(LEADERBOARD_FILES)
-	gcc $(OBJS) -o $@ -Werror -Wextra
+	gcc $(OBJS) -o $@ -Werror -Wextra -lncurses -lpanel -lmenu
 
 # Find all files that end in .c in ./build and make .o's out of them
 # and then dump them into a subdirectory named after the one they came from
