@@ -2,6 +2,7 @@
 #define struct_headers
 #include <stdbool.h>
 
+
 typedef struct boardObjectTag{
    int rows;
    int cols;
