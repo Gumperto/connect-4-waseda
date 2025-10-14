@@ -8,6 +8,21 @@ int check_diag_left(boardObject *game_board, int x, int y, int player);
 int check_diag_right(boardObject *game_board, int x, int y, int player);
 
 int check_connect_4(boardObject* game_board, int x, int y, playerData* player) {
+    int type = 0;
+    //checks for the type of connection (horiz = 1, vert = 2, diag left = 3, diag right = 4)
+    if(check_horizontal(game_board, x, y, player->player_id) >= WIN_NUMBER){
+        type = 1;
+    }
+    if(check_vertical(game_board, x, y, player->player_id) >= WIN_NUMBER){
+        type = 2;
+    }
+    if(check_diag_left(game_board, x, y, player->player_id) >= WIN_NUMBER){
+        type = 3;
+    }
+    if(check_diag_right(game_board, x, y, player->player_id) >= WIN_NUMBER){
+        type = 4;
+    }
+
     if ( (check_horizontal(game_board, x, y, player->player_id) >= WIN_NUMBER) ||
          (check_vertical(game_board, x, y, player->player_id) >= WIN_NUMBER)   ||
          (check_diag_left(game_board, x, y, player->player_id) >= WIN_NUMBER)  ||
@@ -18,6 +33,7 @@ int check_connect_4(boardObject* game_board, int x, int y, playerData* player) {
         return 0;
     }
 }
+
 
 int check_horizontal(boardObject *game_board, int x, int y, int player){
     char increment_char;
