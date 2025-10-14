@@ -12,6 +12,11 @@ int check_diag_right(boardObject *game_board, int x, int y, int player);
 
 int check_connect_4(boardObject* game_board, int x, int y, playerData* player) {
     winType* win_type = (winType*)malloc(sizeof(winType));
+    win_type->horizontal = false;
+    win_type->vertical = false;
+    win_type->diag_left = false;
+    win_type->diag_right = false;
+    
     if(check_horizontal(game_board, x, y, player->player_id) >= WIN_NUMBER) win_type->horizontal = true;
     if(check_vertical(game_board, x, y, player->player_id) >= WIN_NUMBER) win_type->vertical = true;
     if(check_diag_left(game_board, x, y, player->player_id) >= WIN_NUMBER) win_type->diag_left = true;
