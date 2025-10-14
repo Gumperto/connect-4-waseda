@@ -14,12 +14,12 @@ void update_leaderboard(char *winner) {
         int wins;
     } lbTag;
 
-    FILE *leaderboard_file = fopen("leaderboard.txt", "r");
+    FILE *leaderboard_file = fopen("./build/leaderboard.txt", "r");
     if (!leaderboard_file) {
         printf("Error: Could not open leaderboard.txt\n");
         return;
     }
-    FILE *player_list = fopen("player_list.txt", "r+");
+    FILE *player_list = fopen("./build/player_list.txt", "r+");
     if (!player_list) {
         printf("Error: Could not open player_list.txt\n");
         fclose(leaderboard_file);
@@ -61,7 +61,7 @@ void update_leaderboard(char *winner) {
             }
         }
         
-        freopen("leaderboard.txt", "w", leaderboard_file);
+        freopen("./build/leaderboard.txt", "w", leaderboard_file);
         if (!leaderboard_file) {
             printf("Error: Could not reopen leaderboard.txt for writing\n");
             free(lb);
