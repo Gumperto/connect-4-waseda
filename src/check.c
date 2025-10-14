@@ -2,6 +2,7 @@
 #include "macros.h"
 #define WIN_NUMBER 4
 #include <stdbool.h>
+#include <stdlib.h>
 
 
 int check_horizontal(boardObject *game_board, int x, int y, int player);
@@ -17,7 +18,6 @@ int check_connect_4(boardObject* game_board, int x, int y, playerData* player) {
     if(check_diag_right(game_board, x, y, player->player_id) >= WIN_NUMBER) win_type->diag_right = true;
     if (win_type->horizontal == true || win_type->vertical == true || win_type->diag_left == true || win_type->diag_right == true) return 1;
     return 0;
-
 }
 
 
