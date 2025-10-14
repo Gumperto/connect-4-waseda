@@ -41,6 +41,8 @@ void fetch_names(char *player1, char *player2) {
     printf("What's Player 1's name? >>> ");
     fgets(player1, MAX_NAME_SIZE, stdin);
     player1[strcspn(player1, "\n")] = 0;
+    while (strcspn(player1, ",") != strlen(player1))
+        player1[strcspn(player1, ",")] = ' ';
     printf("Hello, %s! Your tile is: %c\n", player1, PLAYER_1_SYMBOL);
 
     printf("\n");
@@ -48,5 +50,7 @@ void fetch_names(char *player1, char *player2) {
     printf("What's Player 2's name? >>> ");
     fgets(player2, MAX_NAME_SIZE, stdin);
     player2[strcspn(player2, "\n")] = 0;
+    while (strcspn(player2, ",") != strlen(player2))
+        player2[strcspn(player2, ",")] = ' ';
     printf("Hello, %s! Your tile is: %c\n", player2, OPPONENT_SYMBOL);    
 }
