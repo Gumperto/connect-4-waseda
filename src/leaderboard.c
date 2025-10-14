@@ -72,8 +72,6 @@ void update_leaderboard(char *winner) {
             fprintf(leaderboard_file, "%s, %d\n", lb[i].name, lb[i].wins);
         }
 
-        free(lb);
-
         // sorting and printing leaderboard
 
         printf("\n===   TOP 5 LEADERBOARD   ===\n");
@@ -100,6 +98,8 @@ void update_leaderboard(char *winner) {
         } else {
             printf("\n(Winner not found in leaderboard — unexpected!)\n");
         }
+
+        free(lb);
     }
 
     fclose(leaderboard_file);
