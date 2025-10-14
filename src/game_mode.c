@@ -6,6 +6,7 @@
 #include "struct_headers.h"
 #include "greeter.h"
 #include "macros.h"
+#include "leaderboard.h"
 
 static int playAgain(void){
     char input = ' ';
@@ -61,6 +62,7 @@ int pvp_mode(void) {
             printf("\n==============\n");
             printf("%s won!\n", player1->player_name);
             printf("==============\n\n");
+            update_leaderboard(player1->player_name);
             break;
         }
        
@@ -69,6 +71,7 @@ int pvp_mode(void) {
             printf("\n==============\n");
             printf("%s won!\n", player2->player_name);
             printf("==============\n\n");
+            update_leaderboard(player2->player_name);
             break;
         }
 
@@ -121,6 +124,7 @@ int pvbot_mode(void) {
             printf("\n==============\n");
             printf("%s won!\n", player->player_name);
             printf("==============\n\n");
+            update_leaderboard(player->player_name);
             break;
         }
        
