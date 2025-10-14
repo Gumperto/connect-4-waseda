@@ -15,7 +15,6 @@ int main() {
         else
             return 1;
         if (play == 0) break;
-
     }
     return 0;
 

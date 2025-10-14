@@ -30,7 +30,11 @@ int check_horizontal(boardObject *game_board, int x, int y, int player){
     // Run left
     int runner = x;
     while (runner >= 0) {
-        if (game_board->board[y][runner] != increment_char) break;
+        if (game_board->board[y][runner] != increment_char) {
+            //unpaint
+            break;
+        }
+        // paint
         count++;
         runner--;
     }
@@ -56,18 +60,28 @@ int check_vertical(boardObject *game_board, int x, int y, int player) {
     // Run up
     int runner = y;
     while (runner >= 0) {
-        if (game_board->board[runner][x] != increment_char) break;
+        if (game_board->board[runner][x] != increment_char) {
+            // unpaint
+            break;
+        }
         count++;
         runner--;
+        // paint
     }
 
     // Run down
     runner = y + 1;
     while (runner < game_board->rows) {
-        if (game_board->board[runner][x] != increment_char) break;
+        if (game_board->board[runner][x] != increment_char) {
+            // unpaint
+            break;
+        }
         count++;
         runner++;
+        // paint
     }
+
+
     return count;
 }
 
