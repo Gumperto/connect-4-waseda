@@ -82,3 +82,24 @@ void print_ascii_art(WINDOW* window, int starty, int startx, int box_width, char
     }
     free(line);
 }
+
+void error_window(char *err_message) {
+    int ch;
+    init_pair(4, COLOR_RED, COLOR_BLACK);
+    WINDOW* err_window = newwin(5, COLS / 2, (LINES - 5) / 2, COLS / 4);
+    keypad(err_window, TRUE);
+
+    PANEL* err_panel = new_panel(err_window);
+    win_show(err_window, "Press F1 to exit", COLOR_PAIR(4));
+    print_in_middle(err_window, 3, 0, COLS / 2, err_message, COLOR_PAIR(4));
+    wrefresh(err_window);
+    update_panels();
+    doupdate();
+
+    while((ch = wgetch(err_window)) != KEY_F(1)) {
+        continue;
+    }
+
+    del_panel(err_panel);
+    destroy_win(err_window);
+}

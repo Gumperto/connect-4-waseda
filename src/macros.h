@@ -10,5 +10,6 @@
 #define PLAYER_1_SYMBOL 'X'
 #define OPPONENT_SYMBOL 'O'
 #define EMPTY '-'
+#define PADDING_SIZE 3
 
 #endif

@@ -8,16 +8,16 @@
 
 #define MAX_NAME_SIZE 128
 #define ARRAY_SIZE 4
-#define TEMP_HACK_FOR_LONGEST_IN_MENU 36
+#define TEMP_HACK_FOR_LONGEST_IN_MENU 33
 
 int greeter(WINDOW *window, int window_height, int window_width, int window_startx, int window_starty) {
     int switch_char;
     char game_mode = -1;
-    int half_height = window_height / 2;
     curs_set(0);
     init_pair(1, COLOR_CYAN, COLOR_BLACK);
 
-    print_ascii_art(window, 1, 0, window_width, "./assets/splash.txt", COLOR_PAIR(1));
+    box(window, 0, 0);
+    print_ascii_art(window, 2, 0, window_width, "./assets/splash.txt", COLOR_PAIR(1));
 
     const char* menu_text[ARRAY_SIZE + 1][2] = {
         "PvP", "Play against a player",
@@ -27,20 +27,27 @@ int greeter(WINDOW *window, int window_height, int window_width, int window_star
         (char*) NULL,   
     };
 
-    ITEM **menu_items = (ITEM **)calloc(ARRAY_SIZE, sizeof(ITEM *));
+    ITEM **menu_items = (ITEM **)calloc(ARRAY_SIZE + 1, sizeof(ITEM *));
     for (int i = 0; i < ARRAY_SIZE; i++) 
         menu_items[i] = new_item(menu_text[i][0], menu_text[i][1]);
     MENU *menu = new_menu(menu_items);
 
-    set_menu_win(menu, window);
-    set_menu_sub(menu, derwin(window, ARRAY_SIZE + 1, TEMP_HACK_FOR_LONGEST_IN_MENU, half_height, (window_width - TEMP_HACK_FOR_LONGEST_IN_MENU) / 2));
+    int display_height = ARRAY_SIZE + 4;
+    int display_width = window_width / 3;
+    int begin_y = (window_height - display_height) / 2;
+    int begin_x = (window_width - display_width) / 2;
+
+    WINDOW* menu_window = derwin(window, display_height, display_width, begin_y, begin_x);
+    box(menu_window, 0, 0);
+
+    set_menu_win(menu, menu_window);
+    set_menu_sub(menu, derwin(menu_window, display_height - 2, display_width - 2, 2, 2));
 
     set_menu_mark(menu, ">>>");
 
     mvwprintw(window, window_height - 2, 2, "Press <ENTER> to select");
     post_menu(menu);
     wrefresh(window);
-
 
 	while((switch_char = wgetch(window)) != KEY_F(1))
 	{   switch(switch_char)
@@ -69,6 +76,7 @@ int greeter(WINDOW *window, int window_height, int window_width, int window_star
         for(int i = 0; i < ARRAY_SIZE; ++i)
             free_item(menu_items[i]);
         free_menu(menu);
+        destroy_win(menu_window);
         wclear(window);
         wrefresh(window);
         return game_mode;
@@ -111,6 +119,9 @@ void fetch_names(char *player1, char *player2, WINDOW* window,
         curs_set(0);
         destroy_win(win_player_2);
     }
+    wclear(window);
+    wrefresh(window);
+    box(window, 0, 0);
 
     noecho();
 }
