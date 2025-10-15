@@ -18,7 +18,7 @@ WINDOW* draw_mini_box(boardObject* game_board, WINDOW* window,
                       int window_startx, int window_starty) {
     init_pair(3, COLOR_CYAN, COLOR_BLACK);
     int display_height = game_board->rows + 10;
-    int display_width = (game_board->cols * (PADDING_SIZE + 1)) - PADDING_SIZE + 10;
+    int display_width = (game_board->cols * (PADDING_SIZE + 1)) - PADDING_SIZE + 20;
     WINDOW* mini_win = derwin(window, display_height, display_width,
                              (window_height - display_height) / 2, 
                              (window_width - display_width) / 2);
@@ -109,7 +109,6 @@ static int playAgain(WINDOW* window){
 void playerPlay(playerData* player, boardObject* game_board, coordinate* recent_coords,
                 WINDOW* board_window) {
     int start_y, start_x, end_y, end_x;
-    char buffer[PADDING_SIZE] = "   ";
 
     getmaxyx(board_window, end_y, end_x);
 

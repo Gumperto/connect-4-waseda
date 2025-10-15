@@ -29,7 +29,7 @@ void print_buffer_to_cursor(WINDOW* window) {
 
 void print_board(boardObject game_board, WINDOW *window) {
     int start_y, start_x, end_y, end_x;
-    char buffer[PADDING_SIZE] = "   ";
+    char buffer[PADDING_SIZE + 1] = "   ";
 
     init_pair(1, COLOR_MAGENTA, COLOR_BLACK);
     init_pair(2, COLOR_YELLOW, COLOR_BLACK);
