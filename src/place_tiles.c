@@ -112,7 +112,7 @@ coordinate* scanTiles(boardObject *game_board, playerData* player,
             return recent_coords;
     }
     else if (player->player_id == BOT){
-        player_index = simpleBot() - 1;
+        player_index = simpleBot();
         recent_coords = placeTiles(game_board, player_index, player);
         while (recent_coords->y >= game_board->rows || recent_coords->y < 0) {
             player_index = simpleBot();
@@ -124,8 +124,8 @@ coordinate* scanTiles(boardObject *game_board, playerData* player,
     else if (player->player_id == BOSS) {
         player_index = finalBoss(game_board);
         recent_coords = placeTiles(game_board, player_index, player);
-        while (recent_coords->y >= game_board->rows || recent_coords->y < 0) {
-            player_index = finalBoss(game_board) - 1;
+        while (recent_coords->y >= game_board->rows || recent_coords->y < 0 || recent_coords->x >= game_board->cols || recent_coords->x < 0) {
+            player_index = finalBoss(game_board);
             recent_coords = placeTiles(game_board, player_index, player);
             sleep(1);
         }
