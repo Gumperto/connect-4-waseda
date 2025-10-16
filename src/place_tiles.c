@@ -18,8 +18,7 @@ coordinate *placeTiles(boardObject *game_board, int columnN, playerData* player)
                 break;
             }
         }
-    }
-    else {
+    } else {
         p_coordinate->y = -1;
         for(int i = game_board->rows - 1; i >= 0; i--) {
             if(game_board->board[i][columnN] == EMPTY) {
@@ -39,7 +38,7 @@ coordinate* scanTiles(boardObject *game_board, playerData* player,
     coordinate* recent_coords = NULL;
     keypad(window, TRUE);
 
-    if (player->player_id != BOT) {
+    if (player->player_id == PLAYER_1 || player_id->player_id == PLAYER_2) {
         const char* menu_text[MAX_COLS + 1][2] = {
             "1  ","",
             "2  ","",
@@ -112,11 +111,21 @@ coordinate* scanTiles(boardObject *game_board, playerData* player,
             keypad(window, FALSE);
             return recent_coords;
     }
-    else {
-        player_index = rand() % MAX_COLS;
+    else if (player->player_id == BOT){
+        player_index = simpleBot() - 1;
         recent_coords = placeTiles(game_board, player_index, player);
         while (recent_coords->y >= game_board->rows || recent_coords->y < 0) {
-            player_index = rand() % MAX_COLS;
+            player_index = simpleBot() - 1;
+            recent_coords = placeTiles(game_board, player_index, player);
+            sleep(1);
+        }
+        return recent_coords;
+    }
+    else if (player->player_id == BOSS) {
+        player_index = finalBoss(game_board) - 1;
+        recent_coords = placeTiles(game_board, player_index, player);
+        while (recent_coords->y >= game_board->rows || recent_coords->y < 0) {
+            player_index = finalBoss(game_board) - 1;
             recent_coords = placeTiles(game_board, player_index, player);
             sleep(1);
         }

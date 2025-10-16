@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 #define MAX_NAME_SIZE 128
-#define ARRAY_SIZE 4
+#define ARRAY_SIZE 5
 #define TEMP_HACK_FOR_LONGEST_IN_MENU 33
 
 int greeter(WINDOW *window, int window_height, int window_width, int window_startx, int window_starty) {
@@ -22,6 +22,7 @@ int greeter(WINDOW *window, int window_height, int window_width, int window_star
     const char* menu_text[ARRAY_SIZE + 1][2] = {
         "PvP", "Play against a player",
         "PvBot", "Play against a bot",
+        "PvBoss", "Play against a difficult bot",
         "Leaderboard", "Check your wins",
         "Exit", "Exit game",
         (char*) NULL,   

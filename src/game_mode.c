@@ -268,3 +268,70 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
     wclear(window);
     return playAgain(window);
 }
+
+//Final Boss Bot
+int pvboss_mode(WINDOW* window, int window_height, int window_width, 
+                int window_startx, int window_starty) {
+    playerData* player = malloc(sizeof(playerData)); 
+    playerData* boss = malloc(sizeof(playerData));
+
+    player->player_name = (char*)malloc(sizeof(char) * MAX_NAME_SIZE);
+    boss->player_name = "CPU";
+
+    player->player_id = PLAYER_1;
+    boss->player_id = BOSS;
+
+    fetch_names(player->player_name, NULL, window, 
+                window_height, window_width, 
+                window_startx, window_starty);
+
+    init_pair(3, COLOR_CYAN, COLOR_BLACK);
+    box(window, 0, 0);
+    print_ascii_art(window, 2, 0, window_width, "./assets/game.txt", COLOR_PAIR(3));
+    wrefresh(window);
+
+    coordinate* recent_coords = malloc(sizeof(coordinate));
+    boardObject* game_board = create_board(MAX_ROWS,MAX_COLS);
+    fill_board(game_board);
+
+    WINDOW* board_window = draw_mini_box(game_board, window, window_height, window_width, window_startx, window_starty);
+    PANEL* board_panel = new_panel(board_window);
+
+    char buffer[MAX_NAME_SIZE];
+    int turn = 1;
+
+    while (1) {
+        printWrapper(game_board, board_window, buffer, player->player_name, turn);
+        playerPlay(player, game_board, recent_coords, board_window);
+        if (player->has_won == 1) {
+            printWrapper(game_board, board_window, buffer, player->player_name, turn = -1);
+            update_leaderboard(player->player_name);           
+            break;
+        }
+       
+        printWrapper(game_board, board_window, buffer, boss->player_name, turn);
+        playerPlay(boss, game_board, recent_coords, board_window);
+        if (bot->has_won == 1) {
+            printWrapper(game_board, board_window, buffer, boss->player_name, turn = -1);
+            break;
+        }
+        turn++;
+    }
+
+    keypad(board_window, TRUE);
+    int ch;
+    while((ch = wgetch(board_window)) != KEY_F(1)) continue;
+    wclear(board_window);
+    wrefresh(board_window);
+
+    del_panel(board_panel);
+    destroy_win(board_window);
+
+    free_board(game_board);
+    free(recent_coords);
+    free(player->player_name);
+    free(player);
+    free(boss);
+    wclear(window);
+    return playAgain(window);
+}

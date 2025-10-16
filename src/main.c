@@ -32,6 +32,8 @@ int main(int argc, char *argv[]) {
             play = pvp_mode(game_window, window_height, window_width, window_startx, window_starty);
         else if (game_mode == 1)
             play = pvbot_mode(game_window, window_height, window_width, window_startx, window_starty);
+        else if (game_mode == 2)
+            play = pvboss_mode(game_window, window_height, window_width, window_startx, window_starty);
         else {
             endwin();
             exit(EXIT_FAILURE);
