@@ -1,58 +1,128 @@
 #include "greeter.h"
+#include "windows.h"
 #include "macros.h"
-#include <stdio.h>
-#include <string.h>
+#include <menu.h>
+#include <panel.h>
+#include <ncurses.h>
+#include <stdlib.h>
 
 #define MAX_NAME_SIZE 128
+#define ARRAY_SIZE 5
+#define TEMP_HACK_FOR_LONGEST_IN_MENU 33
 
-char greeter() {
-    char game_mode;
-    printf("===========================\n");
-    printf("===Welcome to Connect 4!===\n");
-    printf("===========================\n");
+int greeter(WINDOW *window, int window_height, int window_width, int window_startx, int window_starty) {
+    int switch_char;
+    char game_mode = -1;
+    curs_set(0);
+    init_pair(1, COLOR_CYAN, COLOR_BLACK);
+
+    box(window, 0, 0);
+    print_ascii_art(window, 2, 0, window_width, "./assets/splash.txt", COLOR_PAIR(1));
+
+    const char* menu_text[ARRAY_SIZE + 1][2] = {
+        "PvP", "Play against a player",
+        "PvBot", "Play against a bot",
+        "PvBoss", "Play against a difficult bot",
+        "Leaderboard", "Check your wins",
+        "Exit", "Exit game",
+        (char*) NULL,   
+    };
+
+    ITEM **menu_items = (ITEM **)calloc(ARRAY_SIZE + 1, sizeof(ITEM *));
+    for (int i = 0; i < ARRAY_SIZE; i++) 
+        menu_items[i] = new_item(menu_text[i][0], menu_text[i][1]);
+    MENU *menu = new_menu(menu_items);
+
+    int display_height = ARRAY_SIZE + 4;
+    int display_width = window_width / 3;
+    int begin_y = (window_height - display_height) / 2;
+    int begin_x = (window_width - display_width) / 2;
+
+    WINDOW* menu_window = derwin(window, display_height, display_width, begin_y, begin_x);
+    box(menu_window, 0, 0);
+
+    set_menu_win(menu, menu_window);
+    set_menu_sub(menu, derwin(menu_window, display_height - 2, display_width - 2, 2, 2));
+
+    set_menu_mark(menu, ">>>");
+
+    mvwprintw(window, window_height - 2, 2, "Press <ENTER> to select");
+    post_menu(menu);
+    wrefresh(window);
+
+	while((switch_char = wgetch(window)) != KEY_F(1))
+	{   switch(switch_char)
+	    {	case KEY_DOWN:
+		        menu_driver(menu, REQ_DOWN_ITEM);
+				break;
+			case KEY_UP:
+				menu_driver(menu, REQ_UP_ITEM);
+				break;
+            case 10: // Which is <ENTER>
+            {
+                ITEM* current;
+
+                current = current_item(menu);
+                game_mode = item_index(current);
+                wprintw(window, "%d", game_mode);
+                goto cleanup;
+            }
+            break;
+		}
+        wrefresh(window);
+	}
     
-    printf("\n");
-    printf("===SELECT GAME MODE===\n");
-    printf("1. Play against another player\n");
-    printf("2. Play against the CPU\n");
-    printf("3. Play against the Final Boss\n");
-    printf("\n");
-
-    printf("Enter game mode: [p]layer / [b]ot / [f]inal boss>>> ");
-    scanf(" %c", &game_mode);
-    getchar();
-
-    while ((game_mode != 'p' && game_mode != 'P') && 
-           (game_mode != 'b' && game_mode != 'B') && 
-           (game_mode != 'f' && game_mode != 'F')) {
-        printf("Game mode %c not found! Re-enter: [p]layer / [b]ot [f]inal boss >>> ", game_mode);
-        scanf(" %c", &game_mode);
-        getchar();
-    }
-    printf("\n");
-
-    printf("===GAME START===\n");
-    printf("\n");
-    return game_mode;
+    cleanup:
+        unpost_menu(menu);
+        for(int i = 0; i < ARRAY_SIZE; ++i)
+            free_item(menu_items[i]);
+        free_menu(menu);
+        destroy_win(menu_window);
+        wclear(window);
+        wrefresh(window);
+        return game_mode;
 }
 
-void fetch_names(char *player1, char *player2) {
-    printf("===NAME SELECTION===\n");
-    printf("\n");
+void fetch_names(char *player1, char *player2, WINDOW* window, 
+                 int window_height, int window_width, 
+                 int window_startx, int window_starty) {
+    echo();
+    box(window, 0, 0);
+    init_pair(3, COLOR_CYAN, COLOR_BLACK);
+    print_ascii_art(window, 2, 0, window_width, "./assets/name.txt", COLOR_PAIR(3));
+    wrefresh(window);
+    int display_height = 5;
+    int horizontal_length = window_width * 2 / 3;
+    int horizontal_begin = (window_width - horizontal_length) / 2;
 
-    printf("What's Player 1's name? >>> ");
-    fgets(player1, MAX_NAME_SIZE, stdin);
-    player1[strcspn(player1, "\n")] = 0;
-    while (strcspn(player1, ",") != strlen(player1))
-        player1[strcspn(player1, ",")] = ' ';
-    printf("Hello, %s! Your tile is: %c\n", player1, PLAYER_1_SYMBOL);
+    if (player1 != NULL) {
+        WINDOW* win_player_1 = derwin(window, display_height, horizontal_length,
+                                     (window_height - display_height) / 2, horizontal_begin);
+        init_pair(1, COLOR_MAGENTA, COLOR_BLACK);
+        win_show(win_player_1, "Player 1 name", COLOR_PAIR(1));
+        mvwprintw(win_player_1, display_height - 2, 2, "Input Player 1's (%c) name >>> ", PLAYER_1_SYMBOL);
+        wrefresh(win_player_1);
+        curs_set(1);
+        wscanw(win_player_1, "%s", player1);
+        curs_set(0);
+        destroy_win(win_player_1);
+    }
 
-    printf("\n");
+    if (player2 != NULL) {
+        WINDOW* win_player_2 = derwin(window, display_height, horizontal_length,
+                                     (window_height - display_height) / 2, horizontal_begin);
+        init_pair(2, COLOR_YELLOW, COLOR_BLACK);
+        win_show(win_player_2, "Player 2 name", COLOR_PAIR(2));
+        mvwprintw(win_player_2, display_height - 2, 2, "Input Player 2's (%c) name >>> ", OPPONENT_SYMBOL);
+        wrefresh(win_player_2);
+        curs_set(1);
+        wscanw(win_player_2, "%s", player2);
+        curs_set(0);
+        destroy_win(win_player_2);
+    }
+    wclear(window);
+    wrefresh(window);
+    box(window, 0, 0);
 
-    printf("What's Player 2's name? >>> ");
-    fgets(player2, MAX_NAME_SIZE, stdin);
-    player2[strcspn(player2, "\n")] = 0;
-    while (strcspn(player2, ",") != strlen(player2))
-        player2[strcspn(player2, ",")] = ' ';
-    printf("Hello, %s! Your tile is: %c\n", player2, OPPONENT_SYMBOL);    
+    noecho();
 }
