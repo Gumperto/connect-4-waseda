@@ -179,9 +179,6 @@ int score(boardObject *game_board, int player) {
             (game_board->board[r][game_board->cols / 2 + 1] == OPPONENT_SYMBOL)) {
             center_count++;
         }
-        if (game_board->board[r][game_board->cols / 2] == OPPONENT_SYMBOL) {
-            center_count++;
-        }
     }
     score += center_count * 3;
 
