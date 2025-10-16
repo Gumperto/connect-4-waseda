@@ -14,7 +14,6 @@ int simpleBot() {
 }
 
 // Final Boss Mode using Min-max Algorithm
-
 typedef struct best_move {
     int move;
     int score;
@@ -38,7 +37,7 @@ int available_row(boardObject *game_board, int col) {
 // Placing Hypothetical Piece
 void place_piece(boardObject *game_board, int row, int col, int player) {
     if(player == BOSS) game_board->board[row][col] = OPPONENT_SYMBOL;
-    else  game_board->board[row][col] = PLAYER_1_SYMBOL;
+    else game_board->board[row][col] = PLAYER_1_SYMBOL;
 }
 
 // Win Check
@@ -90,13 +89,12 @@ bool winning_move(boardObject *game_board, int player) {
                 return true;
         }
     }
-
     return 0;
 }
 
-// Check if Terminal Node  (Win, Lose or Draw)
+// Check if Terminal Node = Win, Lose or Draw
 bool is_terminal_node(boardObject *game_board) {
-    return winning_move(game_board, BOSS) ||  winning_move(game_board, PLAYER_1) || check_board(game_board); 
+    return winning_move(game_board, BOSS) || winning_move(game_board, PLAYER_1) || check_board(game_board); 
 }
 
 // Maximum
@@ -115,7 +113,6 @@ boardObject *copy_board(boardObject *game_board) {
 
     copy_board->board = malloc(copy_board->rows * sizeof(char *));
     for (int r = 0; r < copy_board->rows; r++) {
-        // CRITICAL FIX: Allocate memory for each individual row
         copy_board->board[r] = malloc(copy_board->cols * sizeof(char));
         for (int c = 0; c < copy_board->cols; c++) {
             copy_board->board[r][c] = game_board->board[r][c];
@@ -140,23 +137,21 @@ int evaluate(int window[], int player) {
         empty_count = 0;
 
     for (int i = 0; i < WIN_NUMBER; i++) {
-        if (window[i] == piece) {
+        if (window[i] == piece) 
             piece_count++;
-        } else if (window[i] == opp_piece) {
+        else if (window[i] == opp_piece) 
             opp_piece_count++;
-        } else {
+        else 
             empty_count++;
-        }
     }
 
     // Assign scores
-    if (piece_count == 4) {
+    if (piece_count == 4) 
         score += 100;
-    } else if (piece_count == 3 && empty_count == 1) {
+    else if (piece_count == 3 && empty_count == 1) 
         score += 5;
-    } else if (piece_count == 2 && empty_count == 2) {
+    else if (piece_count == 2 && empty_count == 2) 
         score += 2;
-    }
 
     // Penalize the opponent for having a strong position
     if (opp_piece_count == 3 && empty_count == 1) {
@@ -182,7 +177,7 @@ int score(boardObject *game_board, int player) {
     }
     score += center_count * 3;
 
-    // --- Score Horizontal ---
+    // Score Horizontal
     for (int r = 0; r < game_board->rows; r++) {
         for (int c = 0; c <= game_board->cols - WIN_NUMBER; c++) {
             for (int i = 0; i < WIN_NUMBER; i++) {
@@ -192,7 +187,7 @@ int score(boardObject *game_board, int player) {
         }
     }
 
-    // --- Score Vertical ---
+    // Score Vertical 
     for (int c = 0; c < game_board->cols; c++) {
         for (int r = 0; r <= game_board->rows - WIN_NUMBER; r++) {
             for (int i = 0; i < WIN_NUMBER; i++) {
@@ -202,7 +197,7 @@ int score(boardObject *game_board, int player) {
         }
     }
 
-    // --- Score Positive Sloped Diagonal ---
+    // Score Positive Sloped Diagonal 
     for (int r = 0; r <= game_board->rows - WIN_NUMBER; r++) {
         for (int c = 0; c <= game_board->cols - WIN_NUMBER; c++) {
             for (int i = 0; i < WIN_NUMBER; i++) {
@@ -212,7 +207,7 @@ int score(boardObject *game_board, int player) {
         }
     }
 
-    // --- Score Negative Sloped Diagonal ---
+    // Score Negative Sloped Diagonal
     for (int r = WIN_NUMBER - 1; r < game_board->rows; r++) {
         for (int c = 0; c <= game_board->cols - WIN_NUMBER; c++) {
             for (int i = 0; i < WIN_NUMBER; i++) {
@@ -304,7 +299,6 @@ best_move* minimax (boardObject *game_board, int depth, int alpha, int beta, boo
             }                
         }
     }
-
     return move_eval;
 }
 
