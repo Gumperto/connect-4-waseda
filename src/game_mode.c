@@ -73,8 +73,10 @@ static int playAgain(WINDOW* window){
     update_panels();
     doupdate();
 
-	while((switch_char = wgetch(window)) != KEY_F(1))
-	{   switch(switch_char)
+	while(1)
+	{   
+        switch_char = wgetch(window);
+        switch(switch_char)
 	    {	case KEY_DOWN:
 		        menu_driver(menu, REQ_DOWN_ITEM);
 				break;
@@ -129,7 +131,7 @@ void printWrapper(boardObject* game_board, WINDOW* board_window, char* buffer, c
             snprintf(buffer, MAX_NAME_SIZE, "Turn %d, Player %s", turn, player_name);
         }
         else {
-            snprintf(buffer, MAX_NAME_SIZE, "Player %s won! F1 to exit", player_name);
+            snprintf(buffer, MAX_NAME_SIZE, "Player %s won! q to exit", player_name);
         }
     }
     print_board(*game_board, board_window);
@@ -170,7 +172,7 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
         printWrapper(game_board, board_window, buffer, player1->player_name, turn);
         playerPlay(player1, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! F1 to exit", NULL, turn = -1);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1);
             break;
         }
         if (player1->has_won == 1) {
@@ -182,7 +184,7 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
         printWrapper(game_board, board_window, buffer, player2->player_name, turn);
         playerPlay(player2, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! F1 to exit", NULL, turn = -1);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1);
             break;
         }
         if (player2->has_won == 1) {
@@ -195,7 +197,7 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
 
     keypad(board_window, TRUE);
     int ch;
-    while((ch = wgetch(board_window)) != KEY_F(1)) continue;
+    while((ch = wgetch(board_window)) != 'q') continue;
     wclear(board_window);
     wrefresh(board_window);
 
@@ -247,7 +249,7 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
         printWrapper(game_board, board_window, buffer, player->player_name, turn);
         playerPlay(player, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! F1 to exit", NULL, turn = -1);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1);
             break;
         }
         if (player->has_won == 1) {
@@ -259,7 +261,7 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
         printWrapper(game_board, board_window, buffer, bot->player_name, turn);
         playerPlay(bot, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! F1 to exit", NULL, turn = -1);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1);
             break;
         }
         if (bot->has_won == 1) {
@@ -271,7 +273,7 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
 
     keypad(board_window, TRUE);
     int ch;
-    while((ch = wgetch(board_window)) != KEY_F(1)) continue;
+    while((ch = wgetch(board_window)) != 'q') continue;
     wclear(board_window);
     wrefresh(board_window);
 
@@ -322,7 +324,7 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
         printWrapper(game_board, board_window, buffer, player->player_name, turn);
         playerPlay(player, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! F1 to exit", NULL, turn = -1);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1);
             break;
         }
         if (player->has_won == 1) {
@@ -334,7 +336,7 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
         printWrapper(game_board, board_window, buffer, boss->player_name, turn);
         playerPlay(boss, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! F1 to exit", NULL, turn = -1);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1);
             break;
         }
         if (boss->has_won == 1) {
@@ -346,7 +348,7 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
 
     keypad(board_window, TRUE);
     int ch;
-    while((ch = wgetch(board_window)) != KEY_F(1)) continue;
+    while((ch = wgetch(board_window)) != 'q') continue;
     wclear(board_window);
     wrefresh(board_window);
 
