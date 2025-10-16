@@ -21,13 +21,6 @@ typedef struct playerDataTag{
     int has_won;
 } playerData;
 
-typedef struct winningType{
-   bool horizontal;
-   bool vertical;
-   bool diag_left;
-   bool diag_right;
-} winType;
-
 extern boardObject *create_board(int rows, int cols);
 extern void free_board(boardObject *game_board);
 extern void print_board(boardObject game_board, WINDOW* window);

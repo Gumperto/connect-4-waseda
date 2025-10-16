@@ -9,8 +9,7 @@ int check_diag_left(boardObject *game_board, int x, int y, int player);
 int check_diag_right(boardObject *game_board, int x, int y, int player);
 
 int check_connect_4(boardObject* game_board, int x, int y, playerData* player) {
-    if(
-        check_horizontal(game_board, x, y, player->player_id) >= WIN_NUMBER || 
+    if(check_horizontal(game_board, x, y, player->player_id) >= WIN_NUMBER || 
         check_vertical(game_board, x, y, player->player_id) >= WIN_NUMBER ||  
         check_diag_left(game_board, x, y, player->player_id) >= WIN_NUMBER || 
         check_diag_right(game_board, x, y, player->player_id) >= WIN_NUMBER ) return 1;
