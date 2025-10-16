@@ -10,7 +10,7 @@
 
 // Simple Bot Mode
 int simpleBot() {
-    return rand() % 7 + 1;
+    return rand() % 7;
 }
 
 // Final Boss Mode using Min-max Algorithm
@@ -299,7 +299,7 @@ best_move* minimax (boardObject *game_board, int depth, int alpha, int beta, boo
 
 int finalBoss(boardObject *game_board) {
     best_move *result = minimax (game_board, 3, -MINMAX_INF, MINMAX_INF, true);
-    int best_col = result->move + 1;
+    int best_col = result->move;
 
     free(result);
     return best_col;

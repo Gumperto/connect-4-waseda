@@ -38,7 +38,7 @@ coordinate* scanTiles(boardObject *game_board, playerData* player,
     coordinate* recent_coords = NULL;
     keypad(window, TRUE);
 
-    if (player->player_id == PLAYER_1 || player_id->player_id == PLAYER_2) {
+    if (player->player_id == PLAYER_1 || player->player_id == PLAYER_2) {
         const char* menu_text[MAX_COLS + 1][2] = {
             "1  ","",
             "2  ","",
@@ -115,14 +115,14 @@ coordinate* scanTiles(boardObject *game_board, playerData* player,
         player_index = simpleBot() - 1;
         recent_coords = placeTiles(game_board, player_index, player);
         while (recent_coords->y >= game_board->rows || recent_coords->y < 0) {
-            player_index = simpleBot() - 1;
+            player_index = simpleBot();
             recent_coords = placeTiles(game_board, player_index, player);
             sleep(1);
         }
         return recent_coords;
     }
     else if (player->player_id == BOSS) {
-        player_index = finalBoss(game_board) - 1;
+        player_index = finalBoss(game_board);
         recent_coords = placeTiles(game_board, player_index, player);
         while (recent_coords->y >= game_board->rows || recent_coords->y < 0) {
             player_index = finalBoss(game_board) - 1;

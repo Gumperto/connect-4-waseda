@@ -311,7 +311,7 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
        
         printWrapper(game_board, board_window, buffer, boss->player_name, turn);
         playerPlay(boss, game_board, recent_coords, board_window);
-        if (bot->has_won == 1) {
+        if (boss->has_won == 1) {
             printWrapper(game_board, board_window, buffer, boss->player_name, turn = -1);
             break;
         }

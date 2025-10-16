@@ -8,7 +8,6 @@
 
 #define MAX_NAME_SIZE 128
 #define ARRAY_SIZE 5
-#define TEMP_HACK_FOR_LONGEST_IN_MENU 33
 
 int greeter(WINDOW *window, int window_height, int window_width, int window_startx, int window_starty) {
     int switch_char;
@@ -34,7 +33,7 @@ int greeter(WINDOW *window, int window_height, int window_width, int window_star
     MENU *menu = new_menu(menu_items);
 
     int display_height = ARRAY_SIZE + 4;
-    int display_width = window_width / 3;
+    int display_width = window_width / 3 + 10;
     int begin_y = (window_height - display_height) / 2;
     int begin_x = (window_width - display_width) / 2;
 
