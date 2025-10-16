@@ -8,10 +8,13 @@ int main() {
     while(1){
         char game_mode = greeter();
         int play = 0;
+
         if (game_mode == 'p' || game_mode == 'P')
             play = pvp_mode();
         else if (game_mode == 'b' || game_mode == 'B')
             play = pvbot_mode();
+        else if (game_mode == 'f' || game_mode == 'F')
+            play = pvboss_mode();
         else
             return 1;
         if (play == 0) break;

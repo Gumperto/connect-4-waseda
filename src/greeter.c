@@ -15,15 +15,17 @@ char greeter() {
     printf("===SELECT GAME MODE===\n");
     printf("1. Play against another player\n");
     printf("2. Play against the CPU\n");
+    printf("3. Play against the Final Boss\n");
     printf("\n");
 
-    printf("Enter game mode: [p]layer / [b]ot >>> ");
+    printf("Enter game mode: [p]layer / [b]ot / [f]inal boss>>> ");
     scanf(" %c", &game_mode);
     getchar();
 
     while ((game_mode != 'p' && game_mode != 'P') && 
-           (game_mode != 'b' && game_mode != 'B')) {
-        printf("Game mode %c not found! Re-enter: [p]layer / [b]ot >>> ", game_mode);
+           (game_mode != 'b' && game_mode != 'B') && 
+           (game_mode != 'f' && game_mode != 'F')) {
+        printf("Game mode %c not found! Re-enter: [p]layer / [b]ot [f]inal boss >>> ", game_mode);
         scanf(" %c", &game_mode);
         getchar();
     }

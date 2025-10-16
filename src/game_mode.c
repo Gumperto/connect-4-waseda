@@ -21,7 +21,7 @@ static int playAgain(void){
 }
 
 void playerPlay(playerData* player, boardObject* game_board, coordinate* recent_coords) {
-    if (player->player_id != BOT)
+    if (player->player_id != BOT && player->player_id != BOSS)
         printf("Player %s choice? [column number]: ", player->player_name);
 
     coordinate* temp = scanTiles(game_board, player);
@@ -119,6 +119,68 @@ int pvbot_mode(void) {
         printf("=============\n");
         print_board(*game_board);
 
+        //Player's Turn
+        playerPlay(player, game_board, recent_coords);
+        if (player->has_won == 1) {
+            printf("\n==============\n");
+            printf("%s won!\n", player->player_name);
+            printf("==============\n\n");
+            update_leaderboard(player->player_name);
+            break;
+        }
+       
+        // Bot's Turn
+        playerPlay(bot, game_board, recent_coords);
+        if (bot->has_won == 1) {
+            printf("\n==============\n");
+            printf("CPU won!\n");
+            printf("==============\n\n");
+            break;
+        }
+
+        turn++;
+    }
+
+    printf("Final board:\n");
+    print_board(*game_board);
+
+    free_board(game_board);
+    free(recent_coords);
+    free(player->player_name);
+    free(player);
+    free(bot);
+    return playAgain();
+}
+
+//Final Boss Bot
+int pvboss_mode(void) {
+    playerData* player = malloc(sizeof(playerData)); 
+    playerData* bot = malloc(sizeof(playerData));
+
+    player->player_name = (char*)malloc(sizeof(char) * MAX_NAME_SIZE);
+
+    player->player_id = PLAYER_1;
+    bot->player_id = BOSS;
+
+    printf("What's Player 1's name? >>> ");
+    fgets(player->player_name, MAX_NAME_SIZE, stdin);
+    player->player_name[strcspn(player->player_name, "\n")] = 0;
+    printf("Hello, %s! Your tile is: %c\n", player->player_name, PLAYER_1_SYMBOL);
+
+    printf("The Final Boss Bot's tile is: %c\n", OPPONENT_SYMBOL);
+
+    coordinate* recent_coords = malloc(sizeof(coordinate));
+    boardObject* game_board = create_board(MAX_ROWS, MAX_COLS);
+    fill_board(game_board);
+
+    int turn = 1;
+
+    while (1) {
+        printf("=============\n");
+        printf("===Turn %d===\n",turn);
+        printf("=============\n");
+        print_board(*game_board);
+
         playerPlay(player, game_board, recent_coords);
         if (player->has_won == 1) {
             printf("\n==============\n");
@@ -147,5 +209,6 @@ int pvbot_mode(void) {
     free(player->player_name);
     free(player);
     free(bot);
+
     return playAgain();
 }
