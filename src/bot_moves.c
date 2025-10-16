@@ -104,6 +104,10 @@ int max(int n1, int n2) {
     return n1 > n2 ? n1 : n2;
 }
 
+int min(int n1, int n2) {
+    return n1 < n2 ? n1 : n2;
+}
+
 boardObject *copy_board(boardObject *game_board) {
     boardObject *copy_board = malloc(sizeof(boardObject));
     copy_board->cols = game_board->cols;
@@ -118,10 +122,6 @@ boardObject *copy_board(boardObject *game_board) {
         }
     }
     return copy_board;
-}
-
-int min(int n1, int n2) {
-    return n1 < n2 ? n1 : n2;
 }
 
 /* Main Functions*/
@@ -160,7 +160,7 @@ int evaluate(int window[], int player) {
 
     // Penalize the opponent for having a strong position
     if (opp_piece_count == 3 && empty_count == 1) {
-        score -= 4;
+        score -= 10;
     }
 
     return score;
@@ -170,6 +170,20 @@ int evaluate(int window[], int player) {
 int score(boardObject *game_board, int player) {
     int score = 0;
     int window[WIN_NUMBER];
+
+    // Prioritise the center column
+    int center_count = 0;
+    for (int r = 0; r < game_board->rows; r++) {
+        if ((game_board->board[r][game_board->cols / 2] == OPPONENT_SYMBOL) || 
+            (game_board->board[r][game_board->cols / 2 - 1] == OPPONENT_SYMBOL) || 
+            (game_board->board[r][game_board->cols / 2 + 1] == OPPONENT_SYMBOL)) {
+            center_count++;
+        }
+        if (game_board->board[r][game_board->cols / 2] == OPPONENT_SYMBOL) {
+            center_count++;
+        }
+    }
+    score += center_count * 3;
 
     // --- Score Horizontal ---
     for (int r = 0; r < game_board->rows; r++) {
