@@ -124,11 +124,13 @@ void playerPlay(playerData* player, boardObject* game_board, coordinate* recent_
 
 void printWrapper(boardObject* game_board, WINDOW* board_window, char* buffer, char* player_name, int turn) {
     wclear(board_window);
-    if (turn != -1) {
-        snprintf(buffer, MAX_NAME_SIZE, "Turn %d, Player %s", turn, player_name);
-    }
-    else {
-        snprintf(buffer, MAX_NAME_SIZE, "Player %s won! F1 to exit", player_name);
+    if (player_name != NULL) {
+        if (turn != -1) {
+            snprintf(buffer, MAX_NAME_SIZE, "Turn %d, Player %s", turn, player_name);
+        }
+        else {
+            snprintf(buffer, MAX_NAME_SIZE, "Player %s won! F1 to exit", player_name);
+        }
     }
     print_board(*game_board, board_window);
     win_show(board_window, buffer, COLOR_PAIR(3));
@@ -167,6 +169,10 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
     while (1) {
         printWrapper(game_board, board_window, buffer, player1->player_name, turn);
         playerPlay(player1, game_board, recent_coords, board_window);
+        if(check_board(game_board)) {
+            printWrapper(game_board, board_window, "Board filled! F1 to exit", NULL, turn = -1);
+            break;
+        }
         if (player1->has_won == 1) {
             update_leaderboard(player1->player_name);
             printWrapper(game_board, board_window, buffer, player1->player_name, turn = -1);
@@ -175,6 +181,10 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
 
         printWrapper(game_board, board_window, buffer, player2->player_name, turn);
         playerPlay(player2, game_board, recent_coords, board_window);
+        if(check_board(game_board)) {
+            printWrapper(game_board, board_window, "Board filled! F1 to exit", NULL, turn = -1);
+            break;
+        }
         if (player2->has_won == 1) {
             update_leaderboard(player2->player_name);
             printWrapper(game_board, board_window, buffer, player2->player_name, turn = -1);
@@ -236,6 +246,10 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
     while (1) {
         printWrapper(game_board, board_window, buffer, player->player_name, turn);
         playerPlay(player, game_board, recent_coords, board_window);
+        if(check_board(game_board)) {
+            printWrapper(game_board, board_window, "Board filled! F1 to exit", NULL, turn = -1);
+            break;
+        }
         if (player->has_won == 1) {
             printWrapper(game_board, board_window, buffer, player->player_name, turn = -1);
             update_leaderboard(player->player_name);           
@@ -244,6 +258,10 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
        
         printWrapper(game_board, board_window, buffer, bot->player_name, turn);
         playerPlay(bot, game_board, recent_coords, board_window);
+        if(check_board(game_board)) {
+            printWrapper(game_board, board_window, "Board filled! F1 to exit", NULL, turn = -1);
+            break;
+        }
         if (bot->has_won == 1) {
             printWrapper(game_board, board_window, buffer, bot->player_name, turn = -1);
             break;
@@ -303,6 +321,10 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
     while (1) {
         printWrapper(game_board, board_window, buffer, player->player_name, turn);
         playerPlay(player, game_board, recent_coords, board_window);
+        if(check_board(game_board)) {
+            printWrapper(game_board, board_window, "Board filled! F1 to exit", NULL, turn = -1);
+            break;
+        }
         if (player->has_won == 1) {
             printWrapper(game_board, board_window, buffer, player->player_name, turn = -1);
             update_leaderboard(player->player_name);           
@@ -311,6 +333,10 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
        
         printWrapper(game_board, board_window, buffer, boss->player_name, turn);
         playerPlay(boss, game_board, recent_coords, board_window);
+        if(check_board(game_board)) {
+            printWrapper(game_board, board_window, "Board filled! F1 to exit", NULL, turn = -1);
+            break;
+        }
         if (boss->has_won == 1) {
             printWrapper(game_board, board_window, buffer, boss->player_name, turn = -1);
             break;
