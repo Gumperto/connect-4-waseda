@@ -122,102 +122,126 @@ boardObject *copy_board(boardObject *game_board) {
 }
 
 /* Main Functions*/
-int evaluate(int window[], int player) {
+// int evaluate(int window[], int player) {
+//     int piece = OPPONENT_SYMBOL, 
+//         opp_piece = PLAYER_1_SYMBOL;
+
+//     if(player == PLAYER_1) {
+//         opp_piece = OPPONENT_SYMBOL;
+//         piece = PLAYER_1_SYMBOL;
+//     }
+
+//     int score = 0, 
+//         piece_count = 0, 
+//         opp_piece_count = 0,
+//         empty_count = 0;
+
+//     for (int i = 0; i < WIN_NUMBER; i++) {
+//         if (window[i] == piece) 
+//             piece_count++;
+//         else if (window[i] == opp_piece) 
+//             opp_piece_count++;
+//         else 
+//             empty_count++;
+//     }
+
+//     // Assign scores
+//     if (piece_count == 4) 
+//         score += 100;
+//     else if (piece_count == 3 && empty_count == 1) 
+//         score += 5;
+//     else if (piece_count == 2 && empty_count == 2) 
+//         score += 2;
+
+//     // Penalize the opponent for having a strong position
+//     if (opp_piece_count == 3 && empty_count == 1) {
+//         score -= 10;
+//     }
+
+//     return score;
+// }
+
+// Scoring System
+int score(boardObject *game_board, int player) {
     int piece = OPPONENT_SYMBOL, 
-        opp_piece = PLAYER_1_SYMBOL;
+        opp_piece = PLAYER_1_SYMBOL,
+        opp_score = 0, 
+        my_score = 0;
 
     if(player == PLAYER_1) {
         opp_piece = OPPONENT_SYMBOL;
         piece = PLAYER_1_SYMBOL;
     }
-
-    int score = 0, 
-        piece_count = 0, 
-        opp_piece_count = 0,
-        empty_count = 0;
-
-    for (int i = 0; i < WIN_NUMBER; i++) {
-        if (window[i] == piece) 
-            piece_count++;
-        else if (window[i] == opp_piece) 
-            opp_piece_count++;
-        else 
-            empty_count++;
-    }
-
-    // Assign scores
-    if (piece_count == 4) 
-        score += 100;
-    else if (piece_count == 3 && empty_count == 1) 
-        score += 5;
-    else if (piece_count == 2 && empty_count == 2) 
-        score += 2;
-
-    // Penalize the opponent for having a strong position
-    if (opp_piece_count == 3 && empty_count == 1) {
-        score -= 10;
-    }
-
-    return score;
-}
-
-// Scoring System
-int score(boardObject *game_board, int player) {
-    int score = 0;
     int window[WIN_NUMBER];
+    int weighting[6][7] = {{3, 4, 5, 7, 5, 4, 3},
+                            {4, 6, 7, 10, 6, 4},
+                            {5, 7, 11, 13, 11, 7, 5},
+                            {5, 7, 11, 13, 11, 7, 5}, 
+                            {4, 6, 8, 10, 8, 6, 4},
+                            {3, 4, 5, 7, 5, 4, 3}};
 
+    for(int i = 0; i < game_board->rows; i++) {
+        for(int j = 0; j < game_board->cols; j++) {
+            if(game_board->board[i][j] == piece) my_score += weighting[i][j];
+            else if(game_board->board[i][j] == opp_piece) opp_score += weighting[i][j];
+        }
+    }
+
+    return my_score - opp_score;
+
+    // int score = 0;
     // Prioritise the center column
-    int center_count = 0;
-    for (int r = 0; r < game_board->rows; r++) {
-        if ((game_board->board[r][game_board->cols / 2] == OPPONENT_SYMBOL) || 
-            (game_board->board[r][game_board->cols / 2 - 1] == OPPONENT_SYMBOL) || 
-            (game_board->board[r][game_board->cols / 2 + 1] == OPPONENT_SYMBOL)) {
-            center_count++;
-        }
-    }
-    score += center_count * 3;
+    // int center_count = 0;
+    // for (int r = 0; r < game_board->rows; r++) {
+    //     if ((game_board->board[r][game_board->cols / 2] == OPPONENT_SYMBOL) || 
+    //         (game_board->board[r][game_board->cols / 2 - 1] == OPPONENT_SYMBOL) || 
+    //         (game_board->board[r][game_board->cols / 2 + 1] == OPPONENT_SYMBOL)) {
+    //         center_count++;
+    //     }
+    // }
+    // score += center_count * 3;
 
-    // Score Horizontal
-    for (int r = 0; r < game_board->rows; r++) {
-        for (int c = 0; c <= game_board->cols - WIN_NUMBER; c++) {
-            for (int i = 0; i < WIN_NUMBER; i++) {
-                window[i] = game_board->board[r][c + i];
-            }
-            score += evaluate(window, player);
-        }
-    }
+    // // Score Horizontal
+    // for (int r = 0; r < game_board->rows; r++) {
+    //     for (int c = 0; c <= game_board->cols - WIN_NUMBER; c++) {
+    //         for (int i = 0; i < WIN_NUMBER; i++) {
+    //             window[i] = game_board->board[r][c + i];
+    //         }
+    //         score += evaluate(window, player);
+    //     }
+    // }
 
-    // Score Vertical 
-    for (int c = 0; c < game_board->cols; c++) {
-        for (int r = 0; r <= game_board->rows - WIN_NUMBER; r++) {
-            for (int i = 0; i < WIN_NUMBER; i++) {
-                window[i] = game_board->board[r + i][c];
-            }
-            score += evaluate(window, player);
-        }
-    }
+    // // Score Vertical 
+    // for (int c = 0; c < game_board->cols; c++) {
+    //     for (int r = 0; r <= game_board->rows - WIN_NUMBER; r++) {
+    //         for (int i = 0; i < WIN_NUMBER; i++) {
+    //             window[i] = game_board->board[r + i][c];
+    //         }
+    //         score += evaluate(window, player);
+    //     }
+    // }
 
-    // Score Positive Sloped Diagonal 
-    for (int r = 0; r <= game_board->rows - WIN_NUMBER; r++) {
-        for (int c = 0; c <= game_board->cols - WIN_NUMBER; c++) {
-            for (int i = 0; i < WIN_NUMBER; i++) {
-                window[i] = game_board->board[r + i][c + i];
-            }
-            score += evaluate(window, player);
-        }
-    }
+    // // Score Positive Sloped Diagonal 
+    // for (int r = 0; r <= game_board->rows - WIN_NUMBER; r++) {
+    //     for (int c = 0; c <= game_board->cols - WIN_NUMBER; c++) {
+    //         for (int i = 0; i < WIN_NUMBER; i++) {
+    //             window[i] = game_board->board[r + i][c + i];
+    //         }
+    //         score += evaluate(window, player);
+    //     }
+    // }
 
-    // Score Negative Sloped Diagonal
-    for (int r = WIN_NUMBER - 1; r < game_board->rows; r++) {
-        for (int c = 0; c <= game_board->cols - WIN_NUMBER; c++) {
-            for (int i = 0; i < WIN_NUMBER; i++) {
-                window[i] = game_board->board[r - i][c + i];
-            }
-            score +=evaluate(window, player);
-        }
-    }
+    // // Score Negative Sloped Diagonal
+    // for (int r = WIN_NUMBER - 1; r < game_board->rows; r++) {
+    //     for (int c = 0; c <= game_board->cols - WIN_NUMBER; c++) {
+    //         for (int i = 0; i < WIN_NUMBER; i++) {
+    //             window[i] = game_board->board[r - i][c + i];
+    //         }
+    //         score +=evaluate(window, player);
+    //     }
+    // }
 
-    return score;
+    // return score;
 }
 
 // Min Max 
@@ -244,7 +268,8 @@ best_move* minimax (boardObject *game_board, int depth, int alpha, int beta, boo
             move_eval->move = -1;
             move_eval->score = score(game_board, BOSS);
         }
-         return move_eval;
+        
+        return move_eval;
     }
 
     // Maximising Player
