@@ -40,6 +40,4 @@ extern int check_vertical(boardObject *game_board, int x, int y, int player);
 extern int check_diag_left(boardObject *game_board, int x, int y, int player);
 extern int check_diag_right(boardObject *game_board, int x, int y, int player);
 
-extern int type;
-
 #endif
