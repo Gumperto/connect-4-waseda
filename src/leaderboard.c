@@ -1,18 +1,19 @@
+#include <ncurses.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "leaderboard.h"
 #include "macros.h"
 
+typedef struct leaderboardTag {
+    char name[MAX_NAME_SIZE];
+    int wins;
+} lbTag;
+
 void update_leaderboard(char *winner) {
 
     int player_count = 0, isSameName = 0;
     char name_string[MAX_NAME_SIZE];
-    
-    typedef struct leaderboardTag {
-        char name[MAX_NAME_SIZE];
-        int wins;
-    } lbTag;
 
     FILE *leaderboard_file = fopen("./build/leaderboard.txt", "r");
     if (!leaderboard_file) {
@@ -44,7 +45,7 @@ void update_leaderboard(char *winner) {
         char line_store[MAX_NAME_SIZE + 5];
         for (int i = 0; i < player_count; i++) {
             fgets(line_store, sizeof(line_store), leaderboard_file);
-            sscanf(line_store, " %127[^,], %d", lb[i].name, &lb[i].wins);      // make sure to have names only until max characters, and no comma used
+            sscanf(line_store, " %127[^,], %d", lb[i].name, &lb[i].wins);
         }
 
         if (isSameName == 0) {
@@ -72,37 +73,86 @@ void update_leaderboard(char *winner) {
             fprintf(leaderboard_file, "%s, %d\n", lb[i].name, lb[i].wins);
         }
 
-        // sorting and printing leaderboard
+        free(lb);
+    }
+    fclose(leaderboard_file);
+    fclose(player_list);
+}
 
-        printf("\n===   TOP 5 LEADERBOARD   ===\n");
-        int limit = (player_count < 5) ? player_count : 5;
-        for (int i = 0; i < limit; i++) {
-            printf("%d. %-20s %d wins\n", i + 1, lb[i].name, lb[i].wins);
+void print_leaderboard(WINDOW* window, char *winner, int winnerCheck) {
+    int player_count = 0;
+    char name_string[MAX_NAME_SIZE];
+
+    FILE *leaderboard_file = fopen("./build/leaderboard.txt", "r");
+        if (!leaderboard_file) { 
+            wprintw(window, "Error: Could not open leaderboard.txt\n"); 
+            wrefresh(window); 
+            return; 
         }
-        printf("================================\n");
+    FILE *player_list = fopen("./build/player_list.txt", "r");
+        if (!player_list) { 
+            wprintw(window, "Error: Could not open player_list.txt\n"); 
+            fclose(leaderboard_file); 
+            wrefresh(window); 
+            return; }
 
+    while (fgets(name_string, sizeof(name_string), player_list)) 
+        player_count++;
+
+    if (player_count == 0) { 
+        wprintw(window, "No players yet.\n"); 
+        fclose(leaderboard_file); 
+        fclose(player_list); 
+        wrefresh(window); 
+        return; 
+    }
+
+    lbTag *lb = malloc(sizeof(lbTag) * player_count);
+
+    char line_store[MAX_NAME_SIZE+10];
+    for (int i = 0 ; i < player_count; i++) {
+        fgets(line_store,sizeof(line_store),leaderboard_file);
+        sscanf(line_store," %127[^,], %d", lb[i].name, &lb[i].wins);
+    }
+
+    for (int i = 0; i < player_count - 1; i++) {
+        for (int j = i + 1; j < player_count; j++) {
+            if (lb[j].wins > lb[i].wins) { 
+                lbTag temp=lb[i]; 
+                lb[i]=lb[j]; 
+                lb[j]=temp; 
+            }
+        }
+    }
+
+    wclear(window);
+    box(window, 0, 0);
+    wprintw(window, "===   TOP 5 LEADERBOARD   ===\n");
+    int limit = (player_count < 5) ? player_count : 5;
+    for (int i = 0; i < limit; i++)
+        wprintw(window, "%d. %-20s %d wins\n", i+1, lb[i].name, lb[i].wins);
+    wprintw(window, "================================\n");
+
+    if (winnerCheck == 1) {
         int winner_rank = -1;
         for (int i = 0; i < player_count; i++) {
-            if (strcmp(lb[i].name, winner) == 0) {
-                winner_rank = i + 1;
-                break;
+            if (strcmp (lb[i].name, winner) == 0) { 
+                winner_rank = i + 1; 
+                break; 
             }
         }
 
-        if (winner_rank > 5) {
-            printf("\n%s is currently ranked #%d with %d wins!\n", 
-                winner, winner_rank, lb[winner_rank - 1].wins);
-        } else if (winner_rank > 0) {
-            printf("\n%s is in the TOP 5! Currently ranked #%d\n", 
-                winner, winner_rank);
+        if(winner_rank > 5) {
+            wprintw(window,"\n%s is currently ranked #%d with %d wins!\n", winner, winner_rank, lb[winner_rank-1].wins);
+        } else if(winner_rank>0) {
+            wprintw(window,"\n%s is in the TOP 5! Currently ranked #%d\n", winner, winner_rank);
         } else {
-            printf("\n(Winner not found in leaderboard — unexpected!)\n");
+            wprintw(window,"\n(Winner not found in leaderboard)\n");
         }
-
-        free(lb);
     }
 
+    wrefresh(window);
+    free(lb);
     fclose(leaderboard_file);
     fclose(player_list);
-    
 }

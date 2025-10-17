@@ -177,6 +177,8 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
         }
         if (player1->has_won == 1) {
             update_leaderboard(player1->player_name);
+            WINDOW* lb_win = derwin(window, 12, 40, 2, 5);
+            print_leaderboard(lb_win, player1->player_name, 1);
             printWrapper(game_board, board_window, buffer, player1->player_name, turn = -1);
             break;
         }
@@ -189,6 +191,8 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
         }
         if (player2->has_won == 1) {
             update_leaderboard(player2->player_name);
+            WINDOW* lb_win = derwin(window, 12, 40, 2, 5);
+            print_leaderboard(lb_win, player2->player_name, 1);
             printWrapper(game_board, board_window, buffer, player2->player_name, turn = -1);
             break;
         }
@@ -254,7 +258,9 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
         }
         if (player->has_won == 1) {
             printWrapper(game_board, board_window, buffer, player->player_name, turn = -1);
-            update_leaderboard(player->player_name);           
+            update_leaderboard(player->player_name);
+            WINDOW* lb_win = derwin(window, 12, 40, 2, 5);
+            print_leaderboard(lb_win, player->player_name, 1);
             break;
         }
        
