@@ -83,6 +83,20 @@ void print_ascii_art(WINDOW* window, int starty, int startx, int box_width, char
     free(line);
 }
 
+WINDOW* draw_mini_box(boardObject* game_board, WINDOW* window, 
+                      int window_height, int window_width, 
+                      int window_startx, int window_starty) {
+    init_pair(3, COLOR_CYAN, COLOR_BLACK);
+    int display_height = game_board->rows + 10;
+    int display_width = (game_board->cols * (PADDING_SIZE + 1)) - PADDING_SIZE + 20;
+    WINDOW* mini_win = derwin(window, display_height, display_width,
+                             (window_height - display_height) / 2, 
+                             (window_width - display_width) / 2);
+    win_show(mini_win, "", COLOR_PAIR(3));
+
+    return mini_win;
+}
+
 void error_window(char *err_message) {
     int ch;
     init_pair(4, COLOR_RED, COLOR_BLACK);
@@ -90,13 +104,13 @@ void error_window(char *err_message) {
     keypad(err_window, TRUE);
 
     PANEL* err_panel = new_panel(err_window);
-    win_show(err_window, "Press F1 to exit", COLOR_PAIR(4));
+    win_show(err_window, "Press q to exit", COLOR_PAIR(4));
     print_in_middle(err_window, 3, 0, COLS / 2, err_message, COLOR_PAIR(4));
     wrefresh(err_window);
     update_panels();
     doupdate();
 
-    while((ch = wgetch(err_window)) != KEY_F(1)) {
+    while((ch = wgetch(err_window)) != 'q') {
         continue;
     }
 

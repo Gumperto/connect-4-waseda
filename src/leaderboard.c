@@ -1,8 +1,11 @@
 #include <ncurses.h>
+#include <panel.h>
+#include <menu.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "leaderboard.h"
+#include "windows.h"
 #include "macros.h"
 
 typedef struct leaderboardTag {
@@ -80,31 +83,47 @@ void update_leaderboard(char *winner) {
 }
 
 void print_leaderboard(WINDOW* window, char *winner, int winnerCheck) {
+    int ch;
+    box(window, 0, 0);
+    wrefresh(window);
+    int window_height, window_width;
+    getmaxyx(window, window_height, window_width);
+    init_pair(3, COLOR_CYAN, COLOR_BLACK);
+    print_ascii_art(window, 2, 0, window_width, "./assets/leaderboard.txt", COLOR_PAIR(3));
+
+    int display_height = MAX_ROWS + 10;
+    int display_width = (MAX_COLS * (PADDING_SIZE + 1)) - PADDING_SIZE + 20;
+    WINDOW* leaderboard_win = derwin(window, display_height, display_width,
+                              (window_height - display_height) / 2, 
+                              (window_width - display_width) / 2);
+
+    PANEL* leaderboard_panel = new_panel(leaderboard_win);
+
+    win_show(leaderboard_win, "Leaderboard: Press q to exit", COLOR_PAIR(3));
+
     int player_count = 0;
     char name_string[MAX_NAME_SIZE];
 
     FILE *leaderboard_file = fopen("./build/leaderboard.txt", "r");
         if (!leaderboard_file) { 
-            wprintw(window, "Error: Could not open leaderboard.txt\n"); 
-            wrefresh(window); 
-            return; 
+            error_window("Error: Could not open leaderboard.txt"); 
+            goto cleanup;
         }
     FILE *player_list = fopen("./build/player_list.txt", "r");
         if (!player_list) { 
-            wprintw(window, "Error: Could not open player_list.txt\n"); 
+            error_window("Error: Could not open player_list.txt"); 
             fclose(leaderboard_file); 
-            wrefresh(window); 
-            return; }
+            goto cleanup;
+        }
 
     while (fgets(name_string, sizeof(name_string), player_list)) 
         player_count++;
 
     if (player_count == 0) { 
-        wprintw(window, "No players yet.\n"); 
+        error_window("No players yet. Play a game or two!"); 
         fclose(leaderboard_file); 
         fclose(player_list); 
-        wrefresh(window); 
-        return; 
+        goto cleanup;
     }
 
     lbTag *lb = malloc(sizeof(lbTag) * player_count);
@@ -125,13 +144,20 @@ void print_leaderboard(WINDOW* window, char *winner, int winnerCheck) {
         }
     }
 
-    wclear(window);
-    box(window, 0, 0);
-    wprintw(window, "===   TOP 5 LEADERBOARD   ===\n");
+    char buffer[MAX_NAME_SIZE + 10];
+    int begin_y = 4;
+    print_in_middle(leaderboard_win, begin_y, 0, display_width,
+                    "TOP 5 LEADERBOARD", COLOR_PAIR(3));
     int limit = (player_count < 5) ? player_count : 5;
-    for (int i = 0; i < limit; i++)
-        wprintw(window, "%d. %-20s %d wins\n", i+1, lb[i].name, lb[i].wins);
-    wprintw(window, "================================\n");
+    for (int i = 0; i < limit; i++) {
+        begin_y++;
+        snprintf(buffer, MAX_NAME_SIZE + 10, "%d. %-20s %d wins", i+1, lb[i].name, lb[i].wins);
+        print_in_middle(leaderboard_win, begin_y, 0, display_width,
+                        buffer, COLOR_PAIR(3));
+    }
+    begin_y++;
+    print_in_middle(leaderboard_win, begin_y, 0, display_width,
+                    "================================", COLOR_PAIR(3));
 
     if (winnerCheck == 1) {
         int winner_rank = -1;
@@ -143,16 +169,41 @@ void print_leaderboard(WINDOW* window, char *winner, int winnerCheck) {
         }
 
         if(winner_rank > 5) {
-            wprintw(window,"\n%s is currently ranked #%d with %d wins!\n", winner, winner_rank, lb[winner_rank-1].wins);
+            begin_y += 2;
+            snprintf(buffer, MAX_NAME_SIZE + 10, 
+                     "%s is currently ranked #%d with %d wins!", 
+                     winner, winner_rank, lb[winner_rank-1].wins);
+            print_in_middle(leaderboard_win, begin_y, 0, display_width,
+                            buffer, COLOR_PAIR(3));
+            begin_y += 2;
         } else if(winner_rank>0) {
-            wprintw(window,"\n%s is in the TOP 5! Currently ranked #%d\n", winner, winner_rank);
+            begin_y += 2;
+            snprintf(buffer, MAX_NAME_SIZE + 10, 
+                     "%s is in the TOP 5! Currently ranked #%d", 
+                     winner, winner_rank, winner_rank);
+            print_in_middle(leaderboard_win, begin_y, 0, display_width,
+                            buffer, COLOR_PAIR(3));
+
+            begin_y += 2;
         } else {
-            wprintw(window,"\n(Winner not found in leaderboard)\n");
+            begin_y += 2;
+            print_in_middle(leaderboard_win, begin_y, 0, display_width,
+                            "(Winner not found in leaderboard)", COLOR_PAIR(3));
+            begin_y += 2;
         }
     }
 
-    wrefresh(window);
+    wrefresh(leaderboard_win);
+    while((ch = wgetch(leaderboard_win)) != 'q') continue;
     free(lb);
     fclose(leaderboard_file);
     fclose(player_list);
+    goto cleanup;
+
+    cleanup:
+        del_panel(leaderboard_panel);
+        destroy_win(leaderboard_win);
+
+        wclear(window);
+        wrefresh(window);
 }
