@@ -1,6 +1,8 @@
 #include "greeter.h"
 #include "gamemodes.h"
 #include "windows.h"
+#include "leaderboard.h"
+#include "macros.h"
 #include <stdbool.h>
 #include <ncurses.h>
 #include <panel.h>
@@ -23,24 +25,36 @@ int main(int argc, char *argv[]) {
     PANEL* game_panel = new_panel(game_window);
     keypad(game_window, TRUE);
 
-    //while 1 = return value of pvp_mode() and pvbot_mode()
-    //1 = restart, 0 = quit
+    int game_mode = 0;
+
     while(1){
-        int game_mode = greeter(game_window, window_height, window_width, window_startx, window_starty);
-        int play = 0;
-        if (game_mode == 0)
-            play = pvp_mode(game_window, window_height, window_width, window_startx, window_starty);
-        else if (game_mode == 1)
-            play = pvbot_mode(game_window, window_height, window_width, window_startx, window_starty);
-        else if (game_mode == 2)
-            play = pvboss_mode(game_window, window_height, window_width, window_startx, window_starty);
+        if (game_mode == MAIN_MENU)
+            game_mode = greeter(game_window, window_height, window_width, window_startx, window_starty);
+        else if (game_mode == PVP) {
+            game_mode = pvp_mode(game_window, window_height, window_width, window_startx, window_starty);
+        }
+        else if (game_mode == PVBOT) {
+            game_mode = pvbot_mode(game_window, window_height, window_width, window_startx, window_starty);
+        }
+        else if (game_mode == PVBOSS) {
+            game_mode = pvboss_mode(game_window, window_height, window_width, window_startx, window_starty);
+        }
+        else if (game_mode == LEADERBOARD) {
+            print_leaderboard(game_window, "", 0);
+            game_mode = 0;
+            continue;
+        }
+        else if (game_mode == QUIT) {
+            break;
+        }
+        else if (game_mode == RESTART) {
+            continue;
+        }
         else {
             endwin();
+            del_panel(game_panel);
+            destroy_win(game_window);
             exit(EXIT_FAILURE);
-        }
-        if (play == 1) {
-            endwin();
-            exit(EXIT_SUCCESS);
         }
     }
     del_panel(game_panel);
