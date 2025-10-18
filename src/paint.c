@@ -10,6 +10,7 @@ if(player1->has_won){
 }
 */
 
+int highlight[MAX_ROWS][MAX_COLS] = {0};
 void label_win_tiles(boardObject *game_board, char wonTile, int lastX, int lastY, int copyBoard[MAX_ROWS][MAX_COLS]) {
     for(int i = 0; i<game_board->rows; i++){
         for(int j = 0; j<game_board->cols; j++){
@@ -100,8 +101,9 @@ void label_win_tiles(boardObject *game_board, char wonTile, int lastX, int lastY
         //label won grid
         if(count>=4){
             int x = startX, y = startY;
-            while(x <= endX && y <= endY){
+            while(1){
                 copyBoard[y][x] = 1;
+                if(x == endX && y == endY) break;
                 x++;
                 y++;
             }
@@ -137,8 +139,9 @@ void label_win_tiles(boardObject *game_board, char wonTile, int lastX, int lastY
         //label won grid
         if(count>=4){
             int x = startX, y = startY;
-            while(x <= endX && y <= endY){
+            while(1){
                 copyBoard[y][x] = 1;
+                if(x == endX && y == endY) break;
                 x++;
                 y--;
             }
