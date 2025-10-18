@@ -181,7 +181,6 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
             break;
         }
         if (player1->has_won == 1) {
-            char wonTile = PLAYER_1_SYMBOL;
             winner = player1;
             break;
         }
@@ -193,7 +192,6 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
             break;
         }
         if (player2->has_won == 1) {
-            char wonTile = OPPONENT_SYMBOL;
             winner = player2;
             break;
         }
@@ -267,7 +265,6 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
             break;
         }
         if (player->has_won == 1) {
-            char wonTile = PLAYER_1_SYMBOL;
             winner = player;
             break;
         }
@@ -279,7 +276,6 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
             break;
         }
         if (bot->has_won == 1) {
-            char wonTile = OPPONENT_SYMBOL;
             winner = bot;
             break;
         }
@@ -352,7 +348,6 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
             break;
         }
         if (player->has_won == 1) {
-            char wonTile = PLAYER_1_SYMBOL;
             winner = player;
             break;
         }
@@ -364,7 +359,6 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
             break;
         }
         if (boss->has_won == 1) {
-            char wonTile = OPPONENT_SYMBOL;
             winner = boss;
             break;
         }
