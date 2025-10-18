@@ -118,25 +118,25 @@ void playerPlay(playerData* player, boardObject* game_board, coordinate* recent_
     free(temp);
 }
 
-void printWrapper(boardObject* game_board, WINDOW* board_window, char* buffer, char* player_name, int turn, bool overlay) {
-    if(!overlay){
-        wclear(board_window);
-    }
+void printWrapper(boardObject* game_board, WINDOW* board_window, char* buffer, playerData* player, int turn, coordinate* recent_coords) {
+    wclear(board_window);
+    char wonTile;
     
-    if (player_name != NULL) {
+    if (player != NULL) {
         if (turn != -1) {
-            snprintf(buffer, MAX_NAME_SIZE, "Turn %d, Player %s", turn, player_name);
-            if(!overlay){
-                print_board(*game_board, board_window);
-            }
-        } else {
-            snprintf(buffer, MAX_NAME_SIZE, "Player %s won! q to exit", player_name);
-        }
-    } else {
-        if(!overlay){
+            snprintf(buffer, MAX_NAME_SIZE, "Turn %d, Player %s", turn, player->player_name);
             print_board(*game_board, board_window);
         }
-        
+        else {
+            if (player->player_id == PLAYER_1)
+                wonTile = PLAYER_1_SYMBOL;
+            else 
+                wonTile = OPPONENT_SYMBOL;
+
+            label_win_tiles(game_board, wonTile, recent_coords->x, recent_coords->y, highlight);
+            snprintf(buffer, MAX_NAME_SIZE, "Player %s won! q to exit", player->player_name);
+            print_won_board(*game_board, board_window, highlight);
+        }
     }
 
     win_show(board_window, buffer, COLOR_PAIR(3));
@@ -174,39 +174,33 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
     int turn = 1;
 
     while (1) {
-        printWrapper(game_board, board_window, buffer, player1->player_name, turn, false);
+        printWrapper(game_board, board_window, buffer, player1, turn, recent_coords);
         playerPlay(player1, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, false);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, recent_coords);
             break;
         }
         if (player1->has_won == 1) {
             char wonTile = PLAYER_1_SYMBOL;
-            label_win_tiles(game_board, wonTile, recent_coords->x, recent_coords->y, highlight);
-            print_won_board(*game_board, board_window, highlight);
-            printWrapper(game_board, board_window, buffer, player1->player_name, turn = -1, true);
             winner = player1;
             break;
         }
 
-        printWrapper(game_board, board_window, buffer, player2->player_name, turn, false);
+        printWrapper(game_board, board_window, buffer, player2, turn, recent_coords);
         playerPlay(player2, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, false);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, recent_coords);
             break;
         }
         if (player2->has_won == 1) {
             char wonTile = OPPONENT_SYMBOL;
-            label_win_tiles(game_board, wonTile, recent_coords->x, recent_coords->y, highlight);
-            print_won_board(*game_board, board_window, highlight);
-            printWrapper(game_board, board_window, buffer, player2->player_name, turn = -1, true);
             winner = player2;
             break;
         }
         turn++;
     }
 
-    printWrapper(game_board, board_window, buffer, winner->player_name, turn = -1, false);
+    printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
 
     keypad(board_window, TRUE);
     int ch;
@@ -266,39 +260,33 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
     int turn = 1;
 
     while (1) {
-        printWrapper(game_board, board_window, buffer, player->player_name, turn, false);
+        printWrapper(game_board, board_window, buffer, player, turn, false);
         playerPlay(player, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, false);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, recent_coords);
             break;
         }
         if (player->has_won == 1) {
             char wonTile = PLAYER_1_SYMBOL;
-            label_win_tiles(game_board, wonTile, recent_coords->x, recent_coords->y, highlight);
-            print_won_board(*game_board, board_window, highlight);
-            printWrapper(game_board, board_window, buffer, player->player_name, turn = -1, true);
             winner = player;
             break;
         }
        
-        printWrapper(game_board, board_window, buffer, bot->player_name, turn, false);
+        printWrapper(game_board, board_window, buffer, bot, turn, recent_coords);
         playerPlay(bot, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, false);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, recent_coords);
             break;
         }
         if (bot->has_won == 1) {
             char wonTile = OPPONENT_SYMBOL;
-            label_win_tiles(game_board, wonTile, recent_coords->x, recent_coords->y, highlight);
-            print_won_board(*game_board, board_window, highlight);
-            printWrapper(game_board, board_window, buffer, bot->player_name, turn = -1, true);
             winner = bot;
             break;
         }
         turn++;
     }
 
-    printWrapper(game_board, board_window, buffer, winner->player_name, turn = -1, false);
+    printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
 
     keypad(board_window, TRUE);
     int ch;
@@ -357,39 +345,33 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
     int turn = 1;
 
     while (1) {
-        printWrapper(game_board, board_window, buffer, player->player_name, turn, false);
+        printWrapper(game_board, board_window, buffer, player, turn, recent_coords);
         playerPlay(player, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, false);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, recent_coords);
             break;
         }
         if (player->has_won == 1) {
             char wonTile = PLAYER_1_SYMBOL;
-            label_win_tiles(game_board, wonTile, recent_coords->x, recent_coords->y, highlight);
-            print_won_board(*game_board, board_window, highlight);
-            printWrapper(game_board, board_window, buffer, player->player_name, turn = -1, true);
             winner = player;
             break;
         }
        
-        printWrapper(game_board, board_window, buffer, boss->player_name, turn, false);
+        printWrapper(game_board, board_window, buffer, boss, turn, recent_coords);
         playerPlay(boss, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, false);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, recent_coords);
             break;
         }
         if (boss->has_won == 1) {
             char wonTile = OPPONENT_SYMBOL;
-            label_win_tiles(game_board, wonTile, recent_coords->x, recent_coords->y, highlight);
-            print_won_board(*game_board, board_window, highlight);
-            printWrapper(game_board, board_window, buffer, boss->player_name, turn = -1, true);
             winner = boss;
             break;
         }
         turn++;
     }
 
-    printWrapper(game_board, board_window, buffer, winner->player_name, turn = -1, false);
+    printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
 
     keypad(board_window, TRUE);
     int ch;
