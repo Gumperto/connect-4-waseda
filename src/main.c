@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     PANEL* game_panel = new_panel(game_window);
     keypad(game_window, TRUE);
 
-    int game_mode = 0;
+    int game_mode = MAIN_MENU;
 
     while(1){
         if (game_mode == MAIN_MENU)
