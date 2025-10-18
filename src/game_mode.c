@@ -181,7 +181,6 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
             break;
         }
         if (player1->has_won == 1) {
-<<<<<<< HEAD
             char wonTile = PLAYER_1_SYMBOL;
             label_win_tiles(game_board, wonTile, recent_coords->x, recent_coords->y, highlight);
             print_won_board(*game_board, board_window, highlight);
@@ -189,9 +188,7 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
             update_leaderboard(player1->player_name);
             WINDOW* lb_win = derwin(window, 12, 40, 2, 5);
             print_leaderboard(lb_win, player1->player_name, 1);
-=======
             winner = player1;
->>>>>>> refs/remotes/origin/master
             break;
         }
 
@@ -202,7 +199,6 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
             break;
         }
         if (player2->has_won == 1) {
-<<<<<<< HEAD
             char wonTile = OPPONENT_SYMBOL;
             label_win_tiles(game_board, wonTile, recent_coords->x, recent_coords->y, highlight);
             print_won_board(*game_board, board_window, highlight);
@@ -210,15 +206,13 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
             update_leaderboard(player2->player_name);
             WINDOW* lb_win = derwin(window, 12, 40, 2, 5);
             print_leaderboard(lb_win, player2->player_name, 1);
-=======
             winner = player2;
->>>>>>> refs/remotes/origin/master
             break;
         }
         turn++;
     }
 
-    printWrapper(game_board, board_window, buffer, winner->player_name, turn = -1);
+    printWrapper(game_board, board_window, buffer, winner->player_name, turn = -1, false);
 
     keypad(board_window, TRUE);
     int ch;
@@ -285,7 +279,6 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
             break;
         }
         if (player->has_won == 1) {
-<<<<<<< HEAD
             char wonTile = PLAYER_1_SYMBOL;
             label_win_tiles(game_board, wonTile, recent_coords->x, recent_coords->y, highlight);
             print_won_board(*game_board, board_window, highlight);
@@ -293,9 +286,7 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
             update_leaderboard(player->player_name);
             WINDOW* lb_win = derwin(window, 12, 40, 2, 5);
             print_leaderboard(lb_win, player->player_name, 1);
-=======
             winner = player;
->>>>>>> refs/remotes/origin/master
             break;
         }
        
@@ -306,20 +297,17 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
             break;
         }
         if (bot->has_won == 1) {
-<<<<<<< HEAD
             char wonTile = OPPONENT_SYMBOL;
             label_win_tiles(game_board, wonTile, recent_coords->x, recent_coords->y, highlight);
             print_won_board(*game_board, board_window, highlight);
             printWrapper(game_board, board_window, buffer, bot->player_name, turn = -1, true);
-=======
             winner = bot;
->>>>>>> refs/remotes/origin/master
             break;
         }
         turn++;
     }
 
-    printWrapper(game_board, board_window, buffer, winner->player_name, turn = -1);
+    printWrapper(game_board, board_window, buffer, winner->player_name, turn = -1, false);
 
     keypad(board_window, TRUE);
     int ch;
@@ -385,15 +373,12 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
             break;
         }
         if (player->has_won == 1) {
-<<<<<<< HEAD
             char wonTile = PLAYER_1_SYMBOL;
             label_win_tiles(game_board, wonTile, recent_coords->x, recent_coords->y, highlight);
             print_won_board(*game_board, board_window, highlight);
             printWrapper(game_board, board_window, buffer, player->player_name, turn = -1, true);
             update_leaderboard(player->player_name);      
-=======
             winner = player;
->>>>>>> refs/remotes/origin/master
             break;
         }
        
@@ -404,20 +389,17 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
             break;
         }
         if (boss->has_won == 1) {
-<<<<<<< HEAD
             char wonTile = OPPONENT_SYMBOL;
             label_win_tiles(game_board, wonTile, recent_coords->x, recent_coords->y, highlight);
             print_won_board(*game_board, board_window, highlight);
             printWrapper(game_board, board_window, buffer, boss->player_name, turn = -1, true);
-=======
             winner = boss;
->>>>>>> refs/remotes/origin/master
             break;
         }
         turn++;
     }
 
-    printWrapper(game_board, board_window, buffer, winner->player_name, turn = -1);
+    printWrapper(game_board, board_window, buffer, winner->player_name, turn = -1, false);
 
     keypad(board_window, TRUE);
     int ch;
