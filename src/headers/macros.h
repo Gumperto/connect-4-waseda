@@ -13,4 +13,15 @@
 #define EMPTY '-'
 #define PADDING_SIZE 3
 
+enum {
+    MAIN_MENU,
+    PVP,
+    PVBOT,
+    PVBOSS,
+    LEADERBOARD,
+    QUIT,
+    RESTART,
+    ERROR = -1,
+};
+
 #endif
