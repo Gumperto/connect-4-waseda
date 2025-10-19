@@ -120,7 +120,7 @@ void playerPlay(playerData* player, boardObject* game_board, coordinate* recent_
     coordinate* temp = scanTiles(game_board, player, board_window, begin_y, begin_x);
     recent_coords->x = temp->x;
     recent_coords->y = temp->y;
-    player->has_won = check_connect_4(game_board, recent_coords->x, recent_coords->y, player);
+    player->has_won = check_connect_4(game_board, recent_coords->x, recent_coords->y, player->player_id);
     free(temp);
 }
 

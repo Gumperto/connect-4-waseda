@@ -6,10 +6,10 @@
 #include "macros.h"
 #include "windows.h"
 
-coordinate *placeTiles(boardObject *game_board, int columnN, playerData* player) {
+coordinate *placeTiles(boardObject *game_board, int columnN, int player) {
     coordinate *p_coordinate = malloc(sizeof(coordinate));
     p_coordinate->x = columnN;
-    if(player->player_id == PLAYER_1) {
+    if(player == PLAYER_1) {
         p_coordinate->y = -1;
         for(int i = game_board->rows - 1; i >= 0; i--) {
             if(game_board->board[i][columnN] == EMPTY) {
@@ -88,7 +88,7 @@ coordinate* scanTiles(boardObject *game_board, playerData* player,
 
                     current = current_item(menu);
                     player_index = item_index(current);
-                    recent_coords = placeTiles(game_board, player_index, player);
+                    recent_coords = placeTiles(game_board, player_index, player->player_id);
                     if (recent_coords->y == -1) {
                         error_window("Invalid column! That's already filled!");
                         continue;
@@ -113,20 +113,20 @@ coordinate* scanTiles(boardObject *game_board, playerData* player,
     }
     else if (player->player_id == BOT){
         player_index = simpleBot();
-        recent_coords = placeTiles(game_board, player_index, player);
+        recent_coords = placeTiles(game_board, player_index, player->player_id);
         while (recent_coords->y >= game_board->rows || recent_coords->y < 0) {
             player_index = simpleBot();
-            recent_coords = placeTiles(game_board, player_index, player);
+            recent_coords = placeTiles(game_board, player_index, player->player_id);
             sleep(1);
         }
         return recent_coords;
     }
     else if (player->player_id == BOSS) {
         player_index = finalBoss(game_board);
-        recent_coords = placeTiles(game_board, player_index, player);
+        recent_coords = placeTiles(game_board, player_index, player->player_id);
         while (recent_coords->y >= game_board->rows || recent_coords->y < 0 || recent_coords->x >= game_board->cols || recent_coords->x < 0) {
             player_index = finalBoss(game_board);
-            recent_coords = placeTiles(game_board, player_index, player);
+            recent_coords = placeTiles(game_board, player_index, player->player_id);
             sleep(1);
         }
         return recent_coords;

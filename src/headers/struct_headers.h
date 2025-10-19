@@ -31,10 +31,10 @@ extern int simpleBot();
 extern int finalBoss(boardObject* game_board);
 
 
-extern coordinate *placeTiles(boardObject *game_board, int columnN, playerData *player);
+extern coordinate *placeTiles(boardObject *game_board, int columnN, int player);
 extern coordinate *scanTiles(boardObject *game_board, playerData *player, WINDOW* window, int begin_y, int begin_x);
 
-extern int check_connect_4(boardObject* game_board, int x, int y, playerData *player);
+extern int check_connect_4(boardObject* game_board, int x, int y, int player);
 extern int check_horizontal(boardObject *game_board, int x, int y, int player);
 extern int check_vertical(boardObject *game_board, int x, int y, int player);
 extern int check_diag_left(boardObject *game_board, int x, int y, int player);
