@@ -172,7 +172,8 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
 
     char buffer[MAX_NAME_SIZE];
     int turn = 1;
-
+    
+    winner->player_id = 999;
     while (1) {
         printWrapper(game_board, board_window, buffer, player1, turn, recent_coords);
         playerPlay(player1, game_board, recent_coords, board_window);
@@ -198,7 +199,8 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
         turn++;
     }
 
-    printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
+    if(winner->player_id)
+        printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
 
     keypad(board_window, TRUE);
     int ch;
@@ -256,6 +258,7 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
 
     char buffer[MAX_NAME_SIZE];
     int turn = 1;
+    winner->player_id = 999;
 
     while (1) {
         printWrapper(game_board, board_window, buffer, player, turn, false);
@@ -282,7 +285,8 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
         turn++;
     }
 
-    printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
+    if(winner->player_id)
+        printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
 
     keypad(board_window, TRUE);
     int ch;
@@ -339,7 +343,8 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
 
     char buffer[MAX_NAME_SIZE];
     int turn = 1;
-
+    
+    winner->player_id = 999;
     while (1) {
         printWrapper(game_board, board_window, buffer, player, turn, recent_coords);
         playerPlay(player, game_board, recent_coords, board_window);
@@ -365,7 +370,9 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
         turn++;
     }
 
-    printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
+    
+    if(winner->player_id)
+        printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
 
     keypad(board_window, TRUE);
     int ch;

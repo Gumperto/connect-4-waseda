@@ -121,6 +121,7 @@ best_move* minimax (boardObject *game_board, int depth, int alpha, int beta, boo
 
     if(depth == 0 || terminal == true) {
         if (terminal){
+            printf("what\n");
             if (temp->x != -1) { 
                 if(check_connect_4(game_board, temp->x, temp->y, BOSS)) {
                     move_eval->move = -1;
