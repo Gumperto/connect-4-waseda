@@ -41,20 +41,15 @@ void place_piece(boardObject *game_board, int row, int col, int player) {
 // Check if Terminal Node = Win, Lose or Draw
 bool is_terminal_node(boardObject *game_board, coordinate *c) {
     if (c->x != -1 && c->y != -1) {
-        if (check_connect_4(game_board, c->x, c->y, BOSS)) {
-            printf("BOSS WIN\n"); 
+        if (check_connect_4(game_board, c->x, c->y, BOSS)) 
             return true;
-        } else if (check_connect_4(game_board, c->x, c->y, PLAYER_1)) {
-            printf("PLAYER WIN\n");
+        else if (check_connect_4(game_board, c->x, c->y, PLAYER_1))
             return true;
-        }
     }
 
-    if(check_board(game_board)) {
-            printf("DRAW\n");
-            return true;
-    }
-    
+    if(check_board(game_board)) 
+        return true;
+
     return false;
 }
 
@@ -84,31 +79,154 @@ boardObject *copy_board(boardObject *game_board) {
 
 /* Main Functions*/
 // Scoring System
-int score(boardObject *game_board, int player) {
+int evaluate(int window[], int player) {
     int piece = OPPONENT_SYMBOL, 
-        opp_piece = PLAYER_1_SYMBOL,
-        opp_score = 0, 
-        my_score = 0;
+        opp_piece = PLAYER_1_SYMBOL;
 
     if(player == PLAYER_1) {
         opp_piece = OPPONENT_SYMBOL;
         piece = PLAYER_1_SYMBOL;
     }
-    int window[WIN_NUMBER];
-    int weighting[6][7] = {{3, 4, 5, 7, 5, 4, 3},
-                            {4, 6, 7, 10, 7, 6, 4},
-                            {5, 7, 11, 13, 11, 7, 5},
-                            {5, 7, 11, 13, 11, 7, 5}, 
-                            {4, 6, 8, 10, 8, 6, 4},
-                            {3, 4, 5, 7, 5, 4, 3}};
 
-    for(int i = 0; i < 6; i++) {
-        for(int j = 0; j < 7; j++) {
-            if(game_board->board[i][j] == piece) my_score += weighting[i][j];
-            else if(game_board->board[i][j] == opp_piece) opp_score += weighting[i][j];
+    int score = 0, 
+        piece_count = 0, 
+        opp_piece_count = 0,
+        empty_count = 0;
+
+    for (int i = 0; i < WIN_NUMBER; i++) {
+        if (window[i] == piece) {
+            piece_count++;
+        } else if (window[i] == opp_piece) {
+            opp_piece_count++;
+        } else {
+            empty_count++;
         }
     }
-    return my_score - opp_score;
+
+    if (piece_count == 4) {
+        score += 1000;
+    } else if (piece_count == 3 && empty_count == 1) {
+        score += 50;
+    } else if (piece_count == 2 && empty_count == 2) {
+        score += 20;
+    }
+
+    // Penalize the opponent for having a strong position
+    if (opp_piece_count == 3 && empty_count == 1) {
+        score -= 1000;
+    }
+
+    return score;
+}
+
+int score(boardObject *game_board, int player) {
+    // int piece = OPPONENT_SYMBOL, 
+    //     opp_piece = PLAYER_1_SYMBOL,
+    //     opp_score = 0, 
+    //     my_score = 0;
+
+    // if(player == PLAYER_1) {
+    //     opp_piece = OPPONENT_SYMBOL;
+    //     piece = PLAYER_1_SYMBOL;
+    // }
+
+    // int weighting[6][7] = {{3, 4, 5, 7, 5, 4, 3},
+    //                         {4, 6, 7, 10, 7, 6, 4},
+    //                         {5, 7, 11, 13, 11, 7, 5},
+    //                         {5, 7, 11, 13, 11, 7, 5}, 
+    //                         {4, 6, 8, 10, 8, 6, 4},
+    //                         {3, 4, 5, 7, 5, 4, 3}};
+
+    // for(int i = 0; i < 6; i++) {
+    //     for(int j = 0; j < 7; j++) {
+    //         if(game_board->board[i][j] == piece) my_score += weighting[i][j];
+    //         else if(game_board->board[i][j] == opp_piece) opp_score += weighting[i][j];
+    //     }
+    // }
+    
+    // int score = my_score - opp_score;
+
+    int score = 0;
+
+    int window[WIN_NUMBER];
+    // Prioritise the center column
+    int center_count = 0;
+    for (int r = 0; r < game_board->rows; r++) {
+        if ((game_board->board[r][game_board->cols / 2] == OPPONENT_SYMBOL) || 
+            (game_board->board[r][game_board->cols / 2 - 1] == OPPONENT_SYMBOL) || 
+            (game_board->board[r][game_board->cols / 2 + 1] == OPPONENT_SYMBOL)) {
+            center_count++;
+        }       
+    }
+    score += center_count * 30;
+
+    // Checking Pieces Position Advantage
+    // Horizontal
+    for (int r = 0; r < game_board->rows; r++) {
+        for (int c = 0; c <= game_board->cols - WIN_NUMBER; c++) {
+            for (int i = 0; i < WIN_NUMBER; i++) {
+                window[i] = game_board->board[r][c + i];
+            }
+            score += evaluate(window, player);
+        }
+    }
+
+    // Vertical
+    for (int c = 0; c < game_board->cols; c++) {
+        for (int r = 0; r <= game_board->rows - WIN_NUMBER; r++) {
+            for (int i = 0; i < WIN_NUMBER; i++) {
+                window[i] = game_board->board[r + i][c];
+            }
+            score += evaluate(window, player);
+        }
+    }
+
+    // Positive Diagonal
+    for (int r = 0; r <= game_board->rows - WIN_NUMBER; r++) {
+        for (int c = 0; c <= game_board->cols - WIN_NUMBER; c++) {
+            for (int i = 0; i < WIN_NUMBER; i++) {
+                window[i] = game_board->board[r + i][c + i];
+            }
+            score += evaluate(window, player);
+        }
+    }
+
+    // Negative Diagonal
+    for (int r = WIN_NUMBER - 1; r < game_board->rows; r++) {
+        for (int c = 0; c <= game_board->cols - WIN_NUMBER; c++) {
+            for (int i = 0; i < WIN_NUMBER; i++) {
+                window[i] = game_board->board[r - i][c + i];
+            }
+            score +=evaluate(window, player);
+        }
+    }
+     
+    return score;
+    // int piece = OPPONENT_SYMBOL, 
+    //     opp_piece = PLAYER_1_SYMBOL,
+    //     opp_score = 0, 
+    //     my_score = 0;
+
+    // if(player == PLAYER_1) {
+    //     opp_piece = OPPONENT_SYMBOL;
+    //     piece = PLAYER_1_SYMBOL;
+    // }
+    // int window[WIN_NUMBER];
+    // int weighting[6][7] = {{3, 4, 5, 7, 5, 4, 3},
+    //                         {4, 6, 7, 10, 7, 6, 4},
+    //                         {5, 7, 11, 13, 11, 7, 5},
+    //                         {5, 7, 11, 13, 11, 7, 5}, 
+    //                         {4, 6, 8, 10, 8, 6, 4},
+    //                         {3, 4, 5, 7, 5, 4, 3}};
+
+    // for(int i = 0; i < 6; i++) {
+    //     for(int j = 0; j < 7; j++) {
+    //         if(game_board->board[i][j] == piece) my_score += weighting[i][j];
+    //         else if(game_board->board[i][j] == opp_piece) opp_score += weighting[i][j];
+    //     }
+    // }
+    
+    // return my_score - opp_score;
 }
 
 // Min Max 
@@ -121,7 +239,6 @@ best_move* minimax (boardObject *game_board, int depth, int alpha, int beta, boo
 
     if(depth == 0 || terminal == true) {
         if (terminal){
-            printf("what\n");
             if (temp->x != -1) { 
                 if(check_connect_4(game_board, temp->x, temp->y, BOSS)) {
                     move_eval->move = -1;
@@ -153,12 +270,10 @@ best_move* minimax (boardObject *game_board, int depth, int alpha, int beta, boo
         // Checking through the columns
         for(int temp_col = 0; temp_col < game_board->cols; temp_col++) {
             if(is_column_empty(game_board, temp_col)) {
-                // temp_row = available_row(game_board, temp_col);
                 b_copy = copy_board(game_board);
 
 
                 coordinate *temp_1 = placeTiles(b_copy, temp_col, BOSS);
-                // place_piece(b_copy, temp_row, temp_col, BOSS);
                 best_move *recursive_eval = minimax(b_copy, depth - 1, alpha, beta, false, temp_1);
                 temp_score = recursive_eval->score;
                 free(recursive_eval);
@@ -171,7 +286,6 @@ best_move* minimax (boardObject *game_board, int depth, int alpha, int beta, boo
                 }
 
                 alpha = max(alpha, move_eval->score);
-
                 if(alpha >= beta) break;
             }
         }
@@ -182,11 +296,9 @@ best_move* minimax (boardObject *game_board, int depth, int alpha, int beta, boo
         // Checking through the columns
         for(int temp_col = 0; temp_col < game_board->cols; temp_col++) {
             if(is_column_empty(game_board, temp_col)) {
-                // temp_row = available_row(game_board, temp_col);
                 b_copy = copy_board(game_board);
 
                 coordinate *temp_1 = placeTiles(b_copy, temp_col, PLAYER_1);
-                // place_piece(b_copy, temp_row, temp_col, PLAYER_1);
                 best_move *recursive_eval = minimax(b_copy, depth - 1, alpha, beta, true, temp_1);
                 temp_score = recursive_eval->score;
                 free(recursive_eval);
@@ -197,6 +309,7 @@ best_move* minimax (boardObject *game_board, int depth, int alpha, int beta, boo
                     move_eval->score = temp_score;
                     move_eval->move = temp_col;
                 }
+
                 beta = min(beta, move_eval->score);
                 if(alpha >= beta) break;
             }                
@@ -209,7 +322,7 @@ int finalBoss(boardObject *game_board) {
     coordinate *test = malloc(sizeof(coordinate));
     test->x = -1;
     test->y = -1;
-    best_move *result = minimax (game_board, 4, -MINMAX_INF, MINMAX_INF, true, test);
+    best_move *result = minimax (game_board, 5, -MINMAX_INF, MINMAX_INF, true, test);
     int best_col = result->move;
 
     free(test);
