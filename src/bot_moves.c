@@ -7,29 +7,21 @@
 #define MINMAX_INF 1000000
 #define WIN_NUMBER 4
 
-// Simple Bot Mode
+/* Simple Bot Mode */ 
 int simpleBot() {
     return rand() % 7;
 }
 
-// Final Boss Mode using Min-max Algorithm
+/* Final Boss Mode using Min-max Algorithm*/ 
 typedef struct best_move {
     int move;
     int score;
 } best_move;
 
 /* Helper Functions */
+// Check Column
 bool is_column_empty(boardObject *game_board, int col) {
     return col >= 0 && col < game_board->cols && game_board->board[0][col] == EMPTY;
-}
-
-// Check the available row in column
-int available_row(boardObject *game_board, int col) {
-    for (int r = game_board->rows - 1; r >= 0; r--) {
-        if (game_board->board[r][col] == EMPTY)
-            return r;
-    }
-    return -1;
 }
 
 // Placing Hypothetical Piece
@@ -111,7 +103,7 @@ int evaluate(int window[], int player) {
         score += 20;
     }
 
-    // Penalize the opponent for having a strong position
+    // Losing Position
     if (opp_piece_count == 3 && empty_count == 1) {
         score -= 1000;
     }
@@ -120,36 +112,11 @@ int evaluate(int window[], int player) {
 }
 
 int score(boardObject *game_board, int player) {
-    // int piece = OPPONENT_SYMBOL, 
-    //     opp_piece = PLAYER_1_SYMBOL,
-    //     opp_score = 0, 
-    //     my_score = 0;
-
-    // if(player == PLAYER_1) {
-    //     opp_piece = OPPONENT_SYMBOL;
-    //     piece = PLAYER_1_SYMBOL;
-    // }
-
-    // int weighting[6][7] = {{3, 4, 5, 7, 5, 4, 3},
-    //                         {4, 6, 7, 10, 7, 6, 4},
-    //                         {5, 7, 11, 13, 11, 7, 5},
-    //                         {5, 7, 11, 13, 11, 7, 5}, 
-    //                         {4, 6, 8, 10, 8, 6, 4},
-    //                         {3, 4, 5, 7, 5, 4, 3}};
-
-    // for(int i = 0; i < 6; i++) {
-    //     for(int j = 0; j < 7; j++) {
-    //         if(game_board->board[i][j] == piece) my_score += weighting[i][j];
-    //         else if(game_board->board[i][j] == opp_piece) opp_score += weighting[i][j];
-    //     }
-    // }
-    
-    // int score = my_score - opp_score;
-
     int score = 0;
 
     int window[WIN_NUMBER];
-    // Prioritise the center column
+
+    // Prioritise Center
     int center_count = 0;
     for (int r = 0; r < game_board->rows; r++) {
         if ((game_board->board[r][game_board->cols / 2] == OPPONENT_SYMBOL) || 
@@ -202,31 +169,6 @@ int score(boardObject *game_board, int player) {
     }
      
     return score;
-    // int piece = OPPONENT_SYMBOL, 
-    //     opp_piece = PLAYER_1_SYMBOL,
-    //     opp_score = 0, 
-    //     my_score = 0;
-
-    // if(player == PLAYER_1) {
-    //     opp_piece = OPPONENT_SYMBOL;
-    //     piece = PLAYER_1_SYMBOL;
-    // }
-    // int window[WIN_NUMBER];
-    // int weighting[6][7] = {{3, 4, 5, 7, 5, 4, 3},
-    //                         {4, 6, 7, 10, 7, 6, 4},
-    //                         {5, 7, 11, 13, 11, 7, 5},
-    //                         {5, 7, 11, 13, 11, 7, 5}, 
-    //                         {4, 6, 8, 10, 8, 6, 4},
-    //                         {3, 4, 5, 7, 5, 4, 3}};
-
-    // for(int i = 0; i < 6; i++) {
-    //     for(int j = 0; j < 7; j++) {
-    //         if(game_board->board[i][j] == piece) my_score += weighting[i][j];
-    //         else if(game_board->board[i][j] == opp_piece) opp_score += weighting[i][j];
-    //     }
-    // }
-    
-    // return my_score - opp_score;
 }
 
 // Min Max 
@@ -267,7 +209,7 @@ best_move* minimax (boardObject *game_board, int depth, int alpha, int beta, boo
         move_eval->score = -MINMAX_INF;
         move_eval->move = -1;
         
-        // Checking through the columns
+        // Checking All Available Columns
         for(int temp_col = 0; temp_col < game_board->cols; temp_col++) {
             if(is_column_empty(game_board, temp_col)) {
                 b_copy = copy_board(game_board);
@@ -293,7 +235,7 @@ best_move* minimax (boardObject *game_board, int depth, int alpha, int beta, boo
         move_eval->score = MINMAX_INF;
         move_eval->move = -1;
         
-        // Checking through the columns
+        // Checking All Available Columns
         for(int temp_col = 0; temp_col < game_board->cols; temp_col++) {
             if(is_column_empty(game_board, temp_col)) {
                 b_copy = copy_board(game_board);
