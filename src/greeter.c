@@ -79,7 +79,13 @@ int greeter(WINDOW *window, int window_height, int window_width, int window_star
         destroy_win(menu_window);
         wclear(window);
         wrefresh(window);
-        return game_mode;
+        if (game_mode == 0) return PVP;
+        else if (game_mode == 1) return PVBOT;
+        else if (game_mode == 2) return PVBOSS;
+        else if (game_mode == 3) return LEADERBOARD;
+        else if (game_mode == 4) return QUIT;
+        else
+            return ERROR;
 }
 
 void fetch_names(char *player1, char *player2, WINDOW* window, 

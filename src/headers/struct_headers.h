@@ -2,6 +2,7 @@
 #define struct_headers
 #include <stdbool.h>
 #include <ncurses.h>
+#include <macros.h>
 
 typedef struct boardObjectTag{
    int rows;
@@ -40,6 +41,8 @@ extern int check_vertical(boardObject *game_board, int x, int y, int player);
 extern int check_diag_left(boardObject *game_board, int x, int y, int player);
 extern int check_diag_right(boardObject *game_board, int x, int y, int player);
 
-extern int type;
+extern int highlight[MAX_ROWS][MAX_COLS];
+extern void label_win_tiles(boardObject *game_board, char wonTile, int lastX, int lastY, int highlight[MAX_ROWS][MAX_COLS]);
+extern void print_won_board(boardObject game_board, WINDOW *window, int highlight[MAX_ROWS][MAX_COLS]);
 
 #endif

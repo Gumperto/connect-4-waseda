@@ -3,6 +3,7 @@
 #include "struct_headers.h"
 #include "macros.h"
 #define MAX_NAME_SIZE 128
+#define COLOR_LIGHTGREEN 8
 
 boardObject *create_board(int rows, int cols) {
     // Add logic to create to a pointer to boardObject
@@ -95,6 +96,49 @@ void print_board(boardObject game_board, WINDOW *window) {
                 }
             }
         }
+    wrefresh(window);
+}
+
+void print_won_board(boardObject game_board, WINDOW *window, int highlight[MAX_ROWS][MAX_COLS]){
+    print_board(game_board, window);
+    
+    int end_y, end_x;
+    getmaxyx(window, end_y, end_x);
+    //the "highlighted" colors
+    init_color(COLOR_LIGHTGREEN, 246, 917, 312);
+    init_pair(5, COLOR_MAGENTA, COLOR_LIGHTGREEN);
+    init_pair(6, COLOR_YELLOW, COLOR_LIGHTGREEN);
+
+    int begin_y = end_y/2 - game_board.rows/2;
+    int begin_x = end_x/2 - ((game_board.cols * (PADDING_SIZE + 1) - PADDING_SIZE)) / 2;
+     
+    for(int i = 0; i< game_board.rows; i++){
+        for(int j = 0; j< game_board.cols; j++){
+            if(highlight[i][j] == 1){
+                if(game_board.board[i][j] == PLAYER_1_SYMBOL){
+                    if(j == 0){
+                        wattron(window, COLOR_PAIR(5) | A_BOLD);
+                        mvwaddch(window, begin_y + i, begin_x, game_board.board[i][j]);
+                        wattroff(window, COLOR_PAIR(5) | A_BOLD);
+                    } else {
+                        wattron(window, COLOR_PAIR(5) | A_BOLD);
+                        mvwaddch(window, begin_y + i, begin_x + j * (PADDING_SIZE + 1), game_board.board[i][j]);
+                        wattroff(window, COLOR_PAIR(5) | A_BOLD);
+                    }
+                } else if (game_board.board[i][j] == OPPONENT_SYMBOL){
+                    if(j == 0){
+                        wattron(window, COLOR_PAIR(6) | A_BOLD);
+                        mvwaddch(window, begin_y + i, begin_x, game_board.board[i][j]);
+                        wattroff(window, COLOR_PAIR(6) | A_BOLD);
+                    } else {
+                        wattron(window, COLOR_PAIR(6) | A_BOLD);
+                        mvwaddch(window, begin_y + i, begin_x + j * (PADDING_SIZE + 1), game_board.board[i][j]);
+                        wattroff(window, COLOR_PAIR(6) | A_BOLD);
+                    }
+                }
+            }
+        }
+    }
     wrefresh(window);
 }
 

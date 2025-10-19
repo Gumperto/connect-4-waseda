@@ -5,29 +5,16 @@
 #include <time.h>
 #include <string.h>
 #include <stdbool.h>
+#include <unistd.h>
 #include "windows.h"
 #include "struct_headers.h"
 #include "greeter.h"
 #include "macros.h"
 #include "leaderboard.h"
 
-#define ARRAY_SIZE 2
+#define ARRAY_SIZE 4
 
-WINDOW* draw_mini_box(boardObject* game_board, WINDOW* window, 
-                      int window_height, int window_width, 
-                      int window_startx, int window_starty) {
-    init_pair(3, COLOR_CYAN, COLOR_BLACK);
-    int display_height = game_board->rows + 10;
-    int display_width = (game_board->cols * (PADDING_SIZE + 1)) - PADDING_SIZE + 20;
-    WINDOW* mini_win = derwin(window, display_height, display_width,
-                             (window_height - display_height) / 2, 
-                             (window_width - display_width) / 2);
-    win_show(mini_win, "", COLOR_PAIR(3));
-
-    return mini_win;
-}
-
-int playAgain(WINDOW* window){
+int playAgain(WINDOW* window, int game_mode){
     int window_height, window_width;
     getmaxyx(window, window_height, window_width);
 
@@ -37,10 +24,12 @@ int playAgain(WINDOW* window){
     wrefresh(window);
 
     int switch_char;
-    int play;
+    int return_index;
 
     const char* menu_text[ARRAY_SIZE + 1][2] = {
+        "Restart", "Restart the game mode",
         "Main menu", "Exit to main menu",
+        "Leaderboard", "Check out leaderboard",
         "Quit", "Quit the game",
         (char*) NULL,
     };
@@ -88,7 +77,7 @@ int playAgain(WINDOW* window){
                 ITEM* current;
 
                 current = current_item(menu);
-                play = item_index(current);
+                return_index = item_index(current);
                 goto cleanup;
             }
             break;
@@ -105,7 +94,12 @@ int playAgain(WINDOW* window){
         destroy_win(menu_window);
         wclear(window);
         wrefresh(window);
-        return play;
+        if (return_index == 0) return game_mode;
+        else if (return_index == 1) return MAIN_MENU;
+        else if (return_index == 2) return LEADERBOARD;
+        else if (return_index == 3) return QUIT;
+        else
+            return ERROR;
 }
 
 void playerPlay(playerData* player, boardObject* game_board, coordinate* recent_coords,
@@ -124,17 +118,27 @@ void playerPlay(playerData* player, boardObject* game_board, coordinate* recent_
     free(temp);
 }
 
-void printWrapper(boardObject* game_board, WINDOW* board_window, char* buffer, char* player_name, int turn) {
+void printWrapper(boardObject* game_board, WINDOW* board_window, char* buffer, playerData* player, int turn, coordinate* recent_coords) {
     wclear(board_window);
-    if (player_name != NULL) {
+    char wonTile;
+    
+    if (player != NULL) {
         if (turn != -1) {
-            snprintf(buffer, MAX_NAME_SIZE, "Turn %d, Player %s", turn, player_name);
+            snprintf(buffer, MAX_NAME_SIZE, "Turn %d, Player %s", turn, player->player_name);
+            print_board(*game_board, board_window);
         }
         else {
-            snprintf(buffer, MAX_NAME_SIZE, "Player %s won! q to exit", player_name);
+            if (player->player_id == PLAYER_1)
+                wonTile = PLAYER_1_SYMBOL;
+            else 
+                wonTile = OPPONENT_SYMBOL;
+
+            label_win_tiles(game_board, wonTile, recent_coords->x, recent_coords->y, highlight);
+            snprintf(buffer, MAX_NAME_SIZE, "Player %s won! q to exit", player->player_name);
+            print_won_board(*game_board, board_window, highlight);
         }
     }
-    print_board(*game_board, board_window);
+
     win_show(board_window, buffer, COLOR_PAIR(3));
 }
 
@@ -142,6 +146,7 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
             int window_startx, int window_starty) {
     playerData* player1 = malloc(sizeof(playerData)); 
     playerData* player2 = malloc(sizeof(playerData));
+    playerData* winner = malloc(sizeof(playerData));
 
     player1->player_name = (char*)malloc(sizeof(char) * MAX_NAME_SIZE);
     player2->player_name = (char*)malloc(sizeof(char) * MAX_NAME_SIZE);
@@ -169,40 +174,46 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
     int turn = 1;
 
     while (1) {
-        printWrapper(game_board, board_window, buffer, player1->player_name, turn);
+        printWrapper(game_board, board_window, buffer, player1, turn, recent_coords);
         playerPlay(player1, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, recent_coords);
             break;
         }
         if (player1->has_won == 1) {
-            update_leaderboard(player1->player_name);
-            printWrapper(game_board, board_window, buffer, player1->player_name, turn = -1);
+            winner = player1;
             break;
         }
 
-        printWrapper(game_board, board_window, buffer, player2->player_name, turn);
+        printWrapper(game_board, board_window, buffer, player2, turn, recent_coords);
         playerPlay(player2, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, recent_coords);
             break;
         }
         if (player2->has_won == 1) {
-            update_leaderboard(player2->player_name);
-            printWrapper(game_board, board_window, buffer, player2->player_name, turn = -1);
+            winner = player2;
             break;
         }
         turn++;
     }
 
+    printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
+
     keypad(board_window, TRUE);
     int ch;
     while((ch = wgetch(board_window)) != 'q') continue;
+
     wclear(board_window);
     wrefresh(board_window);
 
     del_panel(board_panel);
     destroy_win(board_window);
+
+    if (winner->player_id != BOT && winner->player_id != BOSS) {
+        update_leaderboard(winner->player_name);
+        print_leaderboard(window, winner->player_name, 1);
+    }
 
     free_board(game_board);
     free(recent_coords);
@@ -211,7 +222,7 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
     free(player2->player_name);
     free(player2);
     wclear(window);
-    return playAgain(window);
+    return playAgain(window, PVP);
 }
 
 int pvbot_mode(WINDOW* window, int window_height, int window_width, 
@@ -219,6 +230,7 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
     srand(time(NULL));
     playerData* player = malloc(sizeof(playerData)); 
     playerData* bot = malloc(sizeof(playerData));
+    playerData* winner = malloc(sizeof(playerData));
 
     player->player_name = (char*)malloc(sizeof(char) * MAX_NAME_SIZE);
     bot->player_name = "CPU";
@@ -246,39 +258,46 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
     int turn = 1;
 
     while (1) {
-        printWrapper(game_board, board_window, buffer, player->player_name, turn);
+        printWrapper(game_board, board_window, buffer, player, turn, false);
         playerPlay(player, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, recent_coords);
             break;
         }
         if (player->has_won == 1) {
-            printWrapper(game_board, board_window, buffer, player->player_name, turn = -1);
-            update_leaderboard(player->player_name);           
+            winner = player;
             break;
         }
        
-        printWrapper(game_board, board_window, buffer, bot->player_name, turn);
+        printWrapper(game_board, board_window, buffer, bot, turn, recent_coords);
         playerPlay(bot, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, recent_coords);
             break;
         }
         if (bot->has_won == 1) {
-            printWrapper(game_board, board_window, buffer, bot->player_name, turn = -1);
+            winner = bot;
             break;
         }
         turn++;
     }
 
+    printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
+
     keypad(board_window, TRUE);
     int ch;
     while((ch = wgetch(board_window)) != 'q') continue;
+
     wclear(board_window);
     wrefresh(board_window);
 
     del_panel(board_panel);
     destroy_win(board_window);
+
+    if (winner->player_id != BOT && winner->player_id != BOSS) {
+        update_leaderboard(winner->player_name);
+        print_leaderboard(window, winner->player_name, 1);
+    }
 
     free_board(game_board);
     free(recent_coords);
@@ -286,7 +305,7 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
     free(player);
     free(bot);
     wclear(window);
-    return playAgain(window);
+    return playAgain(window, PVBOT);
 }
 
 //Final Boss Bot
@@ -294,6 +313,7 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
                 int window_startx, int window_starty) {
     playerData* player = malloc(sizeof(playerData)); 
     playerData* boss = malloc(sizeof(playerData));
+    playerData* winner = malloc(sizeof(playerData));
 
     player->player_name = (char*)malloc(sizeof(char) * MAX_NAME_SIZE);
     boss->player_name = "CPU";
@@ -321,39 +341,46 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
     int turn = 1;
 
     while (1) {
-        printWrapper(game_board, board_window, buffer, player->player_name, turn);
+        printWrapper(game_board, board_window, buffer, player, turn, recent_coords);
         playerPlay(player, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, recent_coords);
             break;
         }
         if (player->has_won == 1) {
-            printWrapper(game_board, board_window, buffer, player->player_name, turn = -1);
-            update_leaderboard(player->player_name);           
+            winner = player;
             break;
         }
        
-        printWrapper(game_board, board_window, buffer, boss->player_name, turn);
+        printWrapper(game_board, board_window, buffer, boss, turn, recent_coords);
         playerPlay(boss, game_board, recent_coords, board_window);
         if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1);
+            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, recent_coords);
             break;
         }
         if (boss->has_won == 1) {
-            printWrapper(game_board, board_window, buffer, boss->player_name, turn = -1);
+            winner = boss;
             break;
         }
         turn++;
     }
 
+    printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
+
     keypad(board_window, TRUE);
     int ch;
     while((ch = wgetch(board_window)) != 'q') continue;
+
     wclear(board_window);
     wrefresh(board_window);
 
     del_panel(board_panel);
     destroy_win(board_window);
+
+    if (winner->player_id != BOT && winner->player_id != BOSS) {
+        update_leaderboard(winner->player_name);
+        print_leaderboard(window, winner->player_name, 1);
+    }
 
     free_board(game_board);
     free(recent_coords);
@@ -361,5 +388,5 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
     free(player);
     free(boss);
     wclear(window);
-    return playAgain(window);
+    return playAgain(window, PVBOSS);
 }
