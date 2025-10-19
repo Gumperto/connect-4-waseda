@@ -264,7 +264,7 @@ int finalBoss(boardObject *game_board) {
     coordinate *test = malloc(sizeof(coordinate));
     test->x = -1;
     test->y = -1;
-    best_move *result = minimax (game_board, 5, -MINMAX_INF, MINMAX_INF, true, test);
+    best_move *result = minimax (game_board, 4, -MINMAX_INF, MINMAX_INF, true, test);
     int best_col = result->move;
 
     free(test);
