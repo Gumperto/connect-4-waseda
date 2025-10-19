@@ -96,7 +96,7 @@ int evaluate(int window[], int player) {
     }
 
     if (piece_count == 4) {
-        score += 1000;
+        score += 10000;
     } else if (piece_count == 3 && empty_count == 1) {
         score += 50;
     } else if (piece_count == 2 && empty_count == 2) {
@@ -105,7 +105,7 @@ int evaluate(int window[], int player) {
 
     // Losing Position
     if (opp_piece_count == 3 && empty_count == 1) {
-        score -= 1000;
+        score -= 10000;
     }
 
     return score;
@@ -125,7 +125,7 @@ int score(boardObject *game_board, int player) {
             center_count++;
         }       
     }
-    score += center_count * 30;
+    score += center_count * 10;
 
     // Checking Pieces Position Advantage
     // Horizontal
@@ -184,10 +184,10 @@ best_move* minimax (boardObject *game_board, int depth, int alpha, int beta, boo
             if (temp->x != -1) { 
                 if(check_connect_4(game_board, temp->x, temp->y, BOSS)) {
                     move_eval->move = -1;
-                    move_eval->score = 1000;
+                    move_eval->score = 10000;
                 } else if (check_connect_4(game_board, temp->x, temp->y, PLAYER_1)) {
                     move_eval->move = -1;
-                    move_eval->score = -1000;
+                    move_eval->score = -10000;
                 } else {
                     move_eval->move = -1;
                     move_eval->score = 0;
@@ -264,7 +264,7 @@ int finalBoss(boardObject *game_board) {
     coordinate *test = malloc(sizeof(coordinate));
     test->x = -1;
     test->y = -1;
-    best_move *result = minimax (game_board, 4, -MINMAX_INF, MINMAX_INF, true, test);
+    best_move *result = minimax (game_board, 5, -MINMAX_INF, MINMAX_INF, true, test);
     int best_col = result->move;
 
     free(test);

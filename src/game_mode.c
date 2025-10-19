@@ -199,7 +199,7 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
         turn++;
     }
 
-    if(winner->player_id)
+    if(winner->player_id != 999)
         printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
 
     keypad(board_window, TRUE);
@@ -285,7 +285,7 @@ int pvbot_mode(WINDOW* window, int window_height, int window_width,
         turn++;
     }
 
-    if(winner->player_id)
+    if(winner->player_id != 999)
         printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
 
     keypad(board_window, TRUE);
@@ -371,7 +371,7 @@ int pvboss_mode(WINDOW* window, int window_height, int window_width,
     }
 
     
-    if(winner->player_id)
+    if(winner->player_id != 999)
         printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
 
     keypad(board_window, TRUE);
