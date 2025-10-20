@@ -142,7 +142,7 @@ void printWrapper(boardObject* game_board, WINDOW* board_window, char* buffer, p
     win_show(board_window, buffer, COLOR_PAIR(3));
 }
 
-int pvp_mode(WINDOW* window, int window_height, int window_width, 
+int modeChooser(int mode, WINDOW* window, int window_height, int window_width, 
             int window_startx, int window_starty) {
     playerData* player1 = malloc(sizeof(playerData)); 
     playerData* player2 = malloc(sizeof(playerData));
@@ -152,9 +152,9 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
     player2->player_name = (char*)malloc(sizeof(char) * MAX_NAME_SIZE);
 
     player1->player_id = PLAYER_1;
-    player2->player_id = PLAYER_2;
+    player2->player_id = mode;
 
-    fetch_names(player1->player_name, player2->player_name, window, 
+    fetch_names(player1, player2, window, 
                 window_height, window_width, 
                 window_startx, window_starty);
 
@@ -224,176 +224,5 @@ int pvp_mode(WINDOW* window, int window_height, int window_width,
     free(player2->player_name);
     free(player2);
     wclear(window);
-    return playAgain(window, PVP);
-}
-
-int pvbot_mode(WINDOW* window, int window_height, int window_width, 
-               int window_startx, int window_starty) {
-    srand(time(NULL));
-    playerData* player = malloc(sizeof(playerData)); 
-    playerData* bot = malloc(sizeof(playerData));
-    playerData* winner = malloc(sizeof(playerData));
-
-    player->player_name = (char*)malloc(sizeof(char) * MAX_NAME_SIZE);
-    bot->player_name = "CPU";
-
-    player->player_id = PLAYER_1;
-    bot->player_id = BOT;
-
-    fetch_names(player->player_name, NULL, window, 
-                window_height, window_width, 
-                window_startx, window_starty);
-
-    init_pair(3, COLOR_CYAN, COLOR_BLACK);
-    box(window, 0, 0);
-    print_ascii_art(window, 2, 0, window_width, "./assets/game.txt", COLOR_PAIR(3));
-    wrefresh(window);
-
-    coordinate* recent_coords = malloc(sizeof(coordinate));
-    boardObject* game_board = create_board(MAX_ROWS,MAX_COLS);
-    fill_board(game_board);
-
-    WINDOW* board_window = draw_mini_box(game_board, window, window_height, window_width, window_startx, window_starty);
-    PANEL* board_panel = new_panel(board_window);
-
-    char buffer[MAX_NAME_SIZE];
-    int turn = 1;
-    winner->player_id = 999;
-
-    while (1) {
-        printWrapper(game_board, board_window, buffer, player, turn, false);
-        playerPlay(player, game_board, recent_coords, board_window);
-        if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, recent_coords);
-            break;
-        }
-        if (player->has_won == 1) {
-            winner = player;
-            break;
-        }
-       
-        printWrapper(game_board, board_window, buffer, bot, turn, recent_coords);
-        playerPlay(bot, game_board, recent_coords, board_window);
-        if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, recent_coords);
-            break;
-        }
-        if (bot->has_won == 1) {
-            winner = bot;
-            break;
-        }
-        turn++;
-    }
-
-    if(winner->player_id != 999)
-        printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
-
-    keypad(board_window, TRUE);
-    int ch;
-    while((ch = wgetch(board_window)) != 'q') continue;
-
-    wclear(board_window);
-    wrefresh(board_window);
-
-    del_panel(board_panel);
-    destroy_win(board_window);
-
-    if (winner->player_id != BOT && winner->player_id != BOSS) {
-        update_leaderboard(winner->player_name);
-        print_leaderboard(window, winner->player_name, 1);
-    }
-
-    free_board(game_board);
-    free(recent_coords);
-    free(player->player_name);
-    free(player);
-    free(bot);
-    wclear(window);
-    return playAgain(window, PVBOT);
-}
-
-//Final Boss Bot
-int pvboss_mode(WINDOW* window, int window_height, int window_width, 
-                int window_startx, int window_starty) {
-    playerData* player = malloc(sizeof(playerData)); 
-    playerData* boss = malloc(sizeof(playerData));
-    playerData* winner = malloc(sizeof(playerData));
-
-    player->player_name = (char*)malloc(sizeof(char) * MAX_NAME_SIZE);
-    boss->player_name = "CPU";
-
-    player->player_id = PLAYER_1;
-    boss->player_id = BOSS;
-
-    fetch_names(player->player_name, NULL, window, 
-                window_height, window_width, 
-                window_startx, window_starty);
-
-    init_pair(3, COLOR_CYAN, COLOR_BLACK);
-    box(window, 0, 0);
-    print_ascii_art(window, 2, 0, window_width, "./assets/game.txt", COLOR_PAIR(3));
-    wrefresh(window);
-
-    coordinate* recent_coords = malloc(sizeof(coordinate));
-    boardObject* game_board = create_board(MAX_ROWS,MAX_COLS);
-    fill_board(game_board);
-
-    WINDOW* board_window = draw_mini_box(game_board, window, window_height, window_width, window_startx, window_starty);
-    PANEL* board_panel = new_panel(board_window);
-
-    char buffer[MAX_NAME_SIZE];
-    int turn = 1;
-    
-    winner->player_id = 999;
-    while (1) {
-        printWrapper(game_board, board_window, buffer, player, turn, recent_coords);
-        playerPlay(player, game_board, recent_coords, board_window);
-        if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, recent_coords);
-            break;
-        }
-        if (player->has_won == 1) {
-            winner = player;
-            break;
-        }
-       
-        printWrapper(game_board, board_window, buffer, boss, turn, recent_coords);
-        playerPlay(boss, game_board, recent_coords, board_window);
-        if(check_board(game_board)) {
-            printWrapper(game_board, board_window, "Board filled! q to exit", NULL, turn = -1, recent_coords);
-            break;
-        }
-        if (boss->has_won == 1) {
-            winner = boss;
-            break;
-        }
-        turn++;
-    }
-
-    
-    if(winner->player_id != 999)
-        printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
-
-    keypad(board_window, TRUE);
-    int ch;
-    while((ch = wgetch(board_window)) != 'q') continue;
-
-    wclear(board_window);
-    wrefresh(board_window);
-
-    del_panel(board_panel);
-    destroy_win(board_window);
-
-    if (winner->player_id != BOT && winner->player_id != BOSS) {
-        update_leaderboard(winner->player_name);
-        print_leaderboard(window, winner->player_name, 1);
-    }
-
-    free_board(game_board);
-    free(recent_coords);
-    free(player->player_name);
-    free(player);
-    free(boss);
-    wclear(window);
-    return playAgain(window, PVBOSS);
+    return playAgain(window, mode);
 }

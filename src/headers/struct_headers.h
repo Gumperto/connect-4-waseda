@@ -2,7 +2,7 @@
 #define struct_headers
 #include <stdbool.h>
 #include <ncurses.h>
-#include <macros.h>
+#include "macros.h"
 
 typedef struct boardObjectTag{
    int rows;

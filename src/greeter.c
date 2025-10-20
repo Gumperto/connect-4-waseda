@@ -5,6 +5,7 @@
 #include <panel.h>
 #include <ncurses.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define MAX_NAME_SIZE 128
 #define ARRAY_SIZE 5
@@ -88,7 +89,7 @@ int greeter(WINDOW *window, int window_height, int window_width, int window_star
             return ERROR;
 }
 
-void fetch_names(char *player1, char *player2, WINDOW* window, 
+void fetch_names(playerData *player1, playerData *player2, WINDOW* window, 
                  int window_height, int window_width, 
                  int window_startx, int window_starty) {
     echo();
@@ -108,12 +109,12 @@ void fetch_names(char *player1, char *player2, WINDOW* window,
         mvwprintw(win_player_1, display_height - 2, 2, "Input Player 1's (%c) name >>> ", PLAYER_1_SYMBOL);
         wrefresh(win_player_1);
         curs_set(1);
-        wscanw(win_player_1, "%s", player1);
+        wscanw(win_player_1, "%s", player1->player_name);
         curs_set(0);
         destroy_win(win_player_1);
     }
 
-    if (player2 != NULL) {
+    if (player2->player_id != BOT && player2->player_id != BOSS) {
         WINDOW* win_player_2 = derwin(window, display_height, horizontal_length,
                                      (window_height - display_height) / 2, horizontal_begin);
         init_pair(2, COLOR_YELLOW, COLOR_BLACK);
@@ -121,9 +122,12 @@ void fetch_names(char *player1, char *player2, WINDOW* window,
         mvwprintw(win_player_2, display_height - 2, 2, "Input Player 2's (%c) name >>> ", OPPONENT_SYMBOL);
         wrefresh(win_player_2);
         curs_set(1);
-        wscanw(win_player_2, "%s", player2);
+        wscanw(win_player_2, "%s", player2->player_name);
         curs_set(0);
         destroy_win(win_player_2);
+    }
+    else {
+        strcpy(player2->player_name, "CPU");
     }
     wclear(window);
     wrefresh(window);

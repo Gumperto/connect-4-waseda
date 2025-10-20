@@ -31,13 +31,13 @@ int main(int argc, char *argv[]) {
         if (game_mode == MAIN_MENU)
             game_mode = greeter(game_window, window_height, window_width, window_startx, window_starty);
         else if (game_mode == PVP) {
-            game_mode = pvp_mode(game_window, window_height, window_width, window_startx, window_starty);
+            game_mode = modeChooser(PLAYER_2, game_window, window_height, window_width, window_startx, window_starty);
         }
         else if (game_mode == PVBOT) {
-            game_mode = pvbot_mode(game_window, window_height, window_width, window_startx, window_starty);
+            game_mode = modeChooser(BOT, game_window, window_height, window_width, window_startx, window_starty);
         }
         else if (game_mode == PVBOSS) {
-            game_mode = pvboss_mode(game_window, window_height, window_width, window_startx, window_starty);
+            game_mode = modeChooser(BOSS, game_window, window_height, window_width, window_startx, window_starty);
         }
         else if (game_mode == LEADERBOARD) {
             print_leaderboard(game_window, "", 0);
