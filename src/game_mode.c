@@ -138,6 +138,9 @@ void printWrapper(boardObject* game_board, WINDOW* board_window, char* buffer, p
             print_won_board(*game_board, board_window, highlight);
         }
     }
+    else {
+        print_board(*game_board, board_window);
+    }
 
     win_show(board_window, buffer, COLOR_PAIR(3));
 }
@@ -173,7 +176,7 @@ int modeChooser(int mode, WINDOW* window, int window_height, int window_width,
     char buffer[MAX_NAME_SIZE];
     int turn = 1;
     
-    winner->player_id = 999;
+    winner->player_id = ERROR;
     while (1) {
         printWrapper(game_board, board_window, buffer, player1, turn, recent_coords);
         playerPlay(player1, game_board, recent_coords, board_window);
@@ -199,8 +202,9 @@ int modeChooser(int mode, WINDOW* window, int window_height, int window_width,
         turn++;
     }
 
-    if(winner->player_id != 999)
+    if(winner->player_id != ERROR) {
         printWrapper(game_board, board_window, buffer, winner, turn = -1, recent_coords);
+    }
 
     keypad(board_window, TRUE);
     int ch;
@@ -212,10 +216,11 @@ int modeChooser(int mode, WINDOW* window, int window_height, int window_width,
     del_panel(board_panel);
     destroy_win(board_window);
 
-    if (winner->player_id != BOT && winner->player_id != BOSS) {
+    if (winner->player_id != BOT && winner->player_id != BOSS && winner->player_id != ERROR) {
         update_leaderboard(winner->player_name);
         print_leaderboard(window, winner->player_name, 1);
     }
+
 
     free_board(game_board);
     free(recent_coords);

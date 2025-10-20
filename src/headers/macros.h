@@ -21,7 +21,7 @@ enum {
     LEADERBOARD,
     QUIT,
     RESTART,
-    ERROR = -1,
+    ERROR = 999,
 };
 
 #endif
