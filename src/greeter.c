@@ -80,9 +80,9 @@ int greeter(WINDOW *window, int window_height, int window_width, int window_star
         destroy_win(menu_window);
         wclear(window);
         wrefresh(window);
-        if (game_mode == 0) return PVP;
-        else if (game_mode == 1) return PVBOT;
-        else if (game_mode == 2) return PVBOSS;
+        if (game_mode == 0) return PLAYER_2;
+        else if (game_mode == 1) return BOT;
+        else if (game_mode == 2) return BOSS;
         else if (game_mode == 3) return LEADERBOARD;
         else if (game_mode == 4) return QUIT;
         else

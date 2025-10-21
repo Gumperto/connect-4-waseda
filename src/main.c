@@ -30,13 +30,13 @@ int main(int argc, char *argv[]) {
     while(1){
         if (game_mode == MAIN_MENU)
             game_mode = greeter(game_window, window_height, window_width, window_startx, window_starty);
-        else if (game_mode == PVP) {
+        else if (game_mode == PLAYER_2) {
             game_mode = modeChooser(PLAYER_2, game_window, window_height, window_width, window_startx, window_starty);
         }
-        else if (game_mode == PVBOT) {
+        else if (game_mode == BOT) {
             game_mode = modeChooser(BOT, game_window, window_height, window_width, window_startx, window_starty);
         }
-        else if (game_mode == PVBOSS) {
+        else if (game_mode == BOSS) {
             game_mode = modeChooser(BOSS, game_window, window_height, window_width, window_startx, window_starty);
         }
         else if (game_mode == LEADERBOARD) {
